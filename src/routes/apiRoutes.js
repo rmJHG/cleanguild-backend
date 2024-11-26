@@ -13,5 +13,6 @@ router.post("/user/saveHandsImage", authenticateToken, upload.single("image"), u
 router.post("/user/refreshToken", userController.refreshTokenController);
 //이미지 api
 router.post("/handsData/image/compare", upload.single("image"), imageController.compareImage);
+router.post("/handsData/image/findMainCharacter", upload.single("image"), imageController.findMainCharacter);
 
 module.exports = router;
