@@ -1,6 +1,6 @@
 const sharp = require("sharp");
 const { createCanvas } = require("canvas");
-const { getRandomImages } = require("../../../utils/getRandomImages");
+const { getRandomImages } = require("../../../../utils/getRandomImages");
 const compareFixelDiff = async (uploadedImgBuffer) => {
   const uploadedImg = await sharp(uploadedImgBuffer).resize(300, 500).raw().toBuffer();
   const pixelmatch = (await import("pixelmatch")).default;
@@ -38,7 +38,7 @@ const compareFixelDiff = async (uploadedImgBuffer) => {
     }
     return results.sort((a, b) => a - b);
   } catch (error) {
-    throw new Error(`이미지 처리 오류: ${error.message}`);
+    throw new Error("이미지 비교 오류");
   }
 };
 

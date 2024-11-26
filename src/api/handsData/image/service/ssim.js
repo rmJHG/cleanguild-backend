@@ -1,5 +1,5 @@
 const { Jimp } = require("jimp");
-const { getRandomImages } = require("../../../utils/getRandomImages");
+const { getRandomImages } = require("../../../../utils/getRandomImages");
 
 function calculateSSIM(data1, data2, N) {
   let mu1 = 0,
@@ -51,7 +51,7 @@ async function compareImagesSSIM(imageBuffer) {
     }
     return results.sort((a, b) => a.ssim - b.ssim);
   } catch (error) {
-    throw new Error(`이미지 처리 오류: ${error.message}`);
+    throw new Error("이미지 비교 중 오류가 발생했습니다.");
   }
 }
 

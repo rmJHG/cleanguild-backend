@@ -1,12 +1,17 @@
 const express = require("express");
 const { upload } = require("../middlewares/multer");
 const router = express.Router();
+const { authenticateToken } = require("../middlewares/authenticateToken");
+//컨트롤러
+const imageController = require("../api/handsData/image/controller/imageController");
+const userController = require("../api/user/controller/userController");
 
-const handsDataController = require("../api/handsData/controller/handsDataController");
-
-//유저 관련 api
-//이미지 유사도 측정 api
-router.post("/handsData/image/getSsim", upload.single("image"), handsDataController.getSsimsData);
-router.post("/handsData/image/getFixelDiff", upload.single("image"), handsDataController.getFixelDiffData);
+//유저 api
+router.post("/user/signUp", userController.signUpController);
+router.post("/user/signIn", userController.signInController);
+router.post("/user/saveHandsImage", authenticateToken, upload.single("image"), userController.saveHandsImageController);
+router.post("/user/refreshToken", userController.refreshTokenController);
+//이미지 api
+router.post("/handsData/image/compare", upload.single("image"), imageController.compareImage);
 
 module.exports = router;
