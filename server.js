@@ -1,13 +1,24 @@
 const express = require("express");
+const https = require("https");
 const cors = require("cors");
 const apiRoutes = require("./src/routes/apiRoutes");
 const mongoose = require("mongoose");
-
+const cookieParser = require("cookie-parser");
 const app = express();
 const port = 8080;
 require("dotenv").config();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["set-cookie"],
+  })
+);
+app.use(cookieParser());
+
 app.use(express.json());
 if (!process.env.MONGO_URL) {
   console.error("MONGO_URL이 설정되지 않았습니다.");
@@ -20,15 +31,14 @@ mongoose.connect(process.env.MONGO_URL).catch((err) => {
   process.exit(1);
 });
 // Routes
-app.use("/api", apiRoutes);
+app.use("/api/v1", apiRoutes);
 
 mongoose.connection.on("connected", () => {
   console.log("MongoDB connected");
+  app.listen(port, () => {
+    console.log(`서버가 포트 ${port} 에서 시작되었습니다.`);
+  });
 });
 mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err);
-});
-
-app.listen(port, () => {
-  console.log(`서버가 포트 ${port} 에서 시작되었습니다.`);
 });

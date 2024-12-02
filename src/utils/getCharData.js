@@ -12,7 +12,7 @@ async function getCharData(character_name) {
     });
     if (!getCharData.ok) throw new Error("캐릭터 정보가 없습니다.");
     const charJson = await getCharData.json();
-    return { ...charJson };
+    return { ...charJson, ocid };
   } catch (error) {
     throw new Error("캐릭터 정보를 가져오는데 실패했습니다.");
   }

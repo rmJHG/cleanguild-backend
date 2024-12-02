@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    index: true,
   },
   password: {
     type: String,
@@ -23,18 +24,32 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
   ocid: {
     type: String,
     unique: true,
+    sparse: true,
   },
   handsImage: {
     type: Buffer,
     contentType: String,
     originalname: String,
   },
+  handsImageCompareResult: {
+    type: Object,
+  },
   handsImageDiff: {
     type: Object,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  accountType: {
+    type: String,
+    default: "local",
+
+    required: true,
   },
 });
 

@@ -2,7 +2,7 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const fs = require("fs").promises;
 const path = require("path");
-const User = require("../api/user/entity/User");
+const User = require("../api/user/local/entity/User");
 
 const upload = multer({
   storage: storage,

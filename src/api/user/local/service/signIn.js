@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sharp = require("sharp");
 const buffer = require("buffer");
+
 const signIn = async (email, password) => {
   try {
     const user = await User.findOne({ email });
@@ -45,18 +46,30 @@ const signIn = async (email, password) => {
       await User.findOneAndUpdate({ email }, { refreshToken });
       message = "새로운 리프레시 토큰이 발급되었습니다.";
     }
-    console.log(user.handsImage);
-    const handsImage = await sharp(user.handsImage)
-      .jpeg({
-        quality: 100,
-        progressive: true,
-      })
-      .toBuffer();
+
+    let handsImageBase64 = null;
+    if (user.handsImage) {
+      try {
+        const handsImage = await sharp(Buffer.from(user.handsImage))
+          .jpeg({
+            quality: 100,
+            progressive: true,
+          })
+          .toBuffer();
+        handsImageBase64 = `data:image/jpeg;base64,${handsImage.toString("base64")}`;
+      } catch (imageError) {
+        console.error("이미지 처리 중 오류:", imageError);
+        // 이미지 처리 실패시에도 로그인은 계속 진행
+      }
+    }
     return {
       message,
+      email: user.email,
       accessToken,
       refreshToken,
-      handsImage: `data:image/jpeg;base64,${handsImage.toString("base64")}`,
+      ocid: user.ocid,
+      isVerified: user.isVerified,
+      handsImage: handsImageBase64,
     };
   } catch (error) {
     console.log(error);

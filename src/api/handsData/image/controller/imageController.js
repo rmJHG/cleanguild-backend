@@ -4,6 +4,7 @@ const { extractTextFromImage } = require("../service/extractTextFromImage");
 const { getMainChar } = require("../../../../utils/getMainChar");
 const { getCharData } = require("../../../../utils/getCharData");
 const { findDuplicate } = require("../../../../utils/findDuplicate");
+
 const compareImage = async (req, res) => {
   try {
     if (!req.file) {
@@ -47,7 +48,7 @@ const findMainCharacter = async (req, res) => {
     console.error("서버 오류:", error);
     res.status(500).json({
       error: "서버 오류가 발생했습니다.",
-      message: "텍스트 추출 중 오류가 발생했습니다.",
+      message: "캐릭터 추출 중 오류가 발생했습니다.",
     });
   }
 };
