@@ -44,6 +44,8 @@ router.post(
   kakaoAuthenticateToken,
   guildController.postGuildRecruitmentsController
 );
+router.post("/guild/getGuildRecruitments", guildController.getGuildRecruitmentsController);
+router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitmentPosterController);
 router.get("/test", (req, res) => {
   console.log(req.cookies, "cookie");
 

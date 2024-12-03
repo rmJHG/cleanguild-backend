@@ -151,8 +151,16 @@ const refreshTokenController = async (req, res) => {
       message: "리프레시 토큰이 없습니다. 다시 로그인해주세요.",
     });
   }
-  const result = await refreshTokenService(refreshToken);
-  res.status(200).json({ accessToken: result.accessToken });
+  try {
+    const result = await refreshTokenService(refreshToken);
+    res.status(200).json({ accessToken: result.accessToken });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "리프레시 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.",
+    });
+  }
+  res.status(500).json({ success: false, message: error.message });
 };
 
 module.exports = {

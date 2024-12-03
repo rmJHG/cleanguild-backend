@@ -34,7 +34,7 @@ const findMainCharacter = async (req, res) => {
     }
 
     const characterNames = await extractTextFromImage(req.file.buffer);
-
+    console.log(characterNames);
     const charsData = await Promise.all(characterNames.map((character_name) => getMainChar(character_name)));
     console.log("charsData", charsData);
 

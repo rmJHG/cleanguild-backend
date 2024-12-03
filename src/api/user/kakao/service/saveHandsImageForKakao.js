@@ -15,7 +15,7 @@ const saveHandsImageForKakao = async (email, image, ocid) => {
     fixelDiff: Math.min(...fixelDiff),
   };
 
-  user.handsImage = image.buffer;
+  user.handsImage = image;
   user.ocid = ocid;
   user.handsImageCompareResult = compareResult;
   await user.save();
