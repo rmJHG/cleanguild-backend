@@ -2,15 +2,19 @@ const { mongoose } = require("mongoose");
 
 const GuildRecruitmentSchema = new mongoose.Schema({
   postData: {
-    currentNoblePoint: Number,
-    description: String,
-    createdAt: Date,
-    guildName: String,
-    guildType: String,
-    limitedLevel: Number,
-    postDate: Number,
-    suroPoint: Number,
     title: String,
+    description: String,
+    guildName: String,
+                guildType: String,
+    currentNoblePoint: Number,
+    suroPoint: Number,
+        limitedLevel: Number,
+    createdAt: Date,
+    postDate: Number,
+    managerNameArray: [String],
+    openKakaoTalkLink: String,
+guildLevel: Number,
+    guildMemberCount: Number,
   },
   publisherData: {
     email: String,

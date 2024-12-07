@@ -4,6 +4,8 @@ const { extractTextFromImage } = require("../service/extractTextFromImage");
 const { getMainChar } = require("../../../../utils/getMainChar");
 const { getCharData } = require("../../../../utils/getCharData");
 const { findDuplicate } = require("../../../../utils/findDuplicate");
+const { getSsim } = require("../../../../utils/getSsim");
+const { getFixelDiff } = require("../../../../utils/getFixelDiff");
 
 const compareImage = async (req, res) => {
   try {
@@ -24,16 +26,21 @@ const compareImage = async (req, res) => {
 };
 
 const findMainCharacter = async (req, res) => {
+  const img = req.file;
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "이미지 파일이 없습니다." });
-    }
+    if (!img) return res.status(400).json({ error: "이미지 오류", message: "이미지 파일이 없습니다." });
+    if (!img.mimetype.startsWith("image/"))
+      return res.status(400).json({ error: "이미지 오류", message: "유효하지 않은 이미지 형식입니다." });
 
-    if (!req.file.mimetype.startsWith("image/")) {
-      return res.status(400).json({ error: "유효하지 않은 이미지 형식입니다." });
-    }
+    const ssim = await getSsim(img.buffer);
+    const fixelDiff = await getFixelDiff(img.buffer);
 
-    const characterNames = await extractTextFromImage(req.file.buffer);
+    console.log(Math.max(...ssim.map((item) => item.ssim)), Math.min(...fixelDiff));
+
+    if (Math.max(...ssim.map((item) => item.ssim)) < 0.3 && Math.min(...fixelDiff) > 60000)
+      return res.status(400).json({ error: "이미지 오류", message: "핸즈 이미지가 아닌 것 같습니다." });
+
+    const characterNames = await extractTextFromImage(img.buffer);
     console.log(characterNames);
     const charsData = await Promise.all(characterNames.map((character_name) => getMainChar(character_name)));
     console.log("charsData", charsData);
