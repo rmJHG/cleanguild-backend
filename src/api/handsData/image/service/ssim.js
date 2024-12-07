@@ -1,4 +1,4 @@
-const { Jimp } = require("jimp");
+const sharp = require("sharp");
 const { getRandomImages } = require("../../../../utils/getRandomImages");
 
 function calculateSSIM(data1, data2, N) {
@@ -8,48 +8,55 @@ function calculateSSIM(data1, data2, N) {
     sigma2 = 0,
     sigma12 = 0;
 
-  for (let i = 0; i < data1.length; i += 4) {
-    mu1 += data1[i]; // R 채널
-    mu2 += data2[i]; // R 채널
+  // Sharp는 RGBA가 아닌 단일 채널로 반환
+  for (let i = 0; i < data1.length; i++) {
+    mu1 += data1[i];
+    mu2 += data2[i];
   }
   mu1 /= N;
   mu2 /= N;
 
-  for (let i = 0; i < data1.length; i += 4) {
+  for (let i = 0; i < data1.length; i++) {
     const pixel1 = data1[i] - mu1;
     const pixel2 = data2[i] - mu2;
     sigma1 += pixel1 * pixel1;
     sigma2 += pixel2 * pixel2;
     sigma12 += pixel1 * pixel2;
   }
-  sigma1 /= N;
-  sigma2 /= N;
-  sigma12 /= N;
+  sigma1 /= (N - 1);
+  sigma2 /= (N - 1);
+  sigma12 /= (N - 1);
 
   const C1 = Math.pow(0.01 * 255, 2);
   const C2 = Math.pow(0.03 * 255, 2);
-  return ((2 * mu1 * mu2 + C1) * (2 * sigma12 + C2)) / ((mu1 * mu1 + mu2 * mu2 + C1) * (sigma1 + sigma2 + C2));
+  
+  const ssim = ((2 * mu1 * mu2 + C1) * (2 * sigma12 + C2)) / 
+               ((mu1 * mu1 + mu2 * mu2 + C1) * (sigma1 + sigma2 + C2));
+               
+  return Math.max(0, Math.min(1, ssim));  // 0~1 사이로 제한
 }
-
-module.exports = { calculateSSIM, getRandomImages };
 
 async function compareImagesSSIM(imageBuffer) {
   const referenceImages = getRandomImages(15);
   try {
-    const img1 = await Jimp.read(imageBuffer);
-    img1.resize({ w: 50, h: 100 }).greyscale();
+    const img1Buffer = await sharp(imageBuffer)
+      .resize(50, 100)
+      .grayscale()
+      .raw()
+      .toBuffer();
 
     const results = [];
     for (const refImagePath of referenceImages) {
-      const img2 = await Jimp.read(refImagePath);
-      img2.resize({ w: 50, h: 100 }).greyscale();
+      const img2Buffer = await sharp(refImagePath)
+        .resize(50, 100)
+        .grayscale()
+        .raw()
+        .toBuffer();
 
-      const data1 = img1.bitmap.data;
-      const data2 = img2.bitmap.data;
-      const ssim = calculateSSIM(data1, data2, data1.length / 4);
+      const ssim = calculateSSIM(img1Buffer, img2Buffer, 50 * 100);
       results.push({ ssim });
     }
-    return results.sort((a, b) => a.ssim - b.ssim);
+    return results.sort((a, b) => b.ssim - a.ssim);  // 내림차순 정렬 (높은 유사도가 앞으로)
   } catch (error) {
     throw new Error("이미지 비교 중 오류가 발생했습니다.");
   }

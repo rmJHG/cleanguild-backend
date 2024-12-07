@@ -1,45 +1,46 @@
 const sharp = require("sharp");
-const { createCanvas } = require("canvas");
 const { getRandomImages } = require("./getRandomImages");
 
 const getFixelDiff = async (uploadedImgBuffer) => {
-  const uploadedImg = await sharp(uploadedImgBuffer).resize(300, 500).raw().toBuffer();
-  const pixelmatch = (await import("pixelmatch")).default;
+  const width = 300;
+  const height = 500;
+  
+  const uploadedImg = await sharp(uploadedImgBuffer)
+    .resize(width, height)
+    .grayscale()
+    .raw()
+    .toBuffer();
 
   const randomImages = getRandomImages(15);
-
   const results = [];
 
   try {
     for (const imgPath of randomImages) {
-      // 이미지 리사이즈 (300x500)
+      const compareImg = await sharp(imgPath)
+        .resize(width, height)
+        .grayscale()
+        .raw()
+        .toBuffer();
 
-      const compareImg = await sharp(imgPath).resize(300, 500).raw().toBuffer();
+      let diffCount = 0;
+      const threshold = 30; // 픽셀 차이 임계값
 
-      // Canvas를 사용하여 픽셀 데이터 비교
-      const width = 300;
-      const height = 500;
-      const canvas = createCanvas(width, height);
-      const ctx = canvas.getContext("2d");
+      // 픽셀 단위로 비교
+      for (let i = 0; i < uploadedImg.length; i++) {
+        const diff = Math.abs(uploadedImg[i] - compareImg[i]);
+        if (diff > threshold) {
+          diffCount++;
+        }
+      }
 
-      // 업로드된 이미지 데이터
-      const img1Data = ctx.createImageData(width, height);
-      img1Data.data.set(uploadedImg);
-      ctx.putImageData(img1Data, 0, 0);
-
-      // 비교할 이미지 데이터
-      const img2Data = ctx.createImageData(width, height);
-      img2Data.data.set(compareImg);
-
-      // 차이 이미지 생성
-      const diff = ctx.createImageData(width, height);
-      const numDiffPixels = pixelmatch(img1Data.data, img2Data.data, diff.data, width, height, { threshold: 0.1 });
-
-      results.push(numDiffPixels);
+      // 차이 비율 계산 (0~1 사이 값)
+      const diffRatio = 1 - (diffCount / (width * height));
+      results.push({ diffRatio });
     }
-    return results.sort((a, b) => a - b);
+
+    return results.sort((a, b) => b.diffRatio - a.diffRatio);
   } catch (error) {
-    return error;
+    throw new Error("이미지 비교 중 오류가 발생했습니다.");
   }
 };
 

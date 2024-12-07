@@ -10,7 +10,7 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: [`https://www.${process.env.CLIENT_URL}`, `https://${process.env.CLIENT_URL}`],
+    origin: [`https://www.${process.env.CLIENT_URL}`, `https://${process.env.CLIENT_URL}`, "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
