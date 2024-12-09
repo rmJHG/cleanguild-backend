@@ -5,7 +5,10 @@ const postGuildRecruitments = async (postData, publisherData) => {
     const currentGuildModel = getGuildModel(publisherData.handsData.world_name);
 
     const guildPost = {
-      postData,
+      postData: {
+        ...postData,
+        postDate: new Date().getTime(),
+      },
       publisherData,
     };
     const result = await currentGuildModel.create(guildPost);
