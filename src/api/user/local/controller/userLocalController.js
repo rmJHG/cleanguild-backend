@@ -5,7 +5,6 @@ const { sendVerificationLink } = require("../service/sendVerificationCode");
 const { refreshTokenService } = require("../service/refreshToken");
 const User = require("../entity/User");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 
 const resentEmailVerificationCodeController = async (req, res) => {
   const { email } = req.body;
@@ -31,19 +30,45 @@ const checkEmailController = async (req, res) => {
 };
 const verifyEmailController = async (req, res) => {
   const { welcome } = req.query;
-  const decoded = jwt.verify(welcome, process.env.JWT_SECRET);
-  if (!decoded) {
-    res.status(400).json({ message: "유효하지 않은 토큰입니다." });
-    return;
-  }
+  console.log(welcome);
 
-  const user = await User.findOne({ email: decoded.email });
-  if (user) {
-    user.isVerified = true;
-    await user.save();
-    res.status(200).json({ message: "이메일 인증이 완료되었습니다." });
-  } else {
-    res.status(404).json({ message: "유저를 찾을 수 없습니다." });
+  try {
+    const decoded = jwt.verify(welcome, process.env.JWT_SECRET);
+    if (!decoded) return res.status(400).json({ message: "유효하지 않은 토큰입니다." });
+
+    const email = decoded.email;
+    const user = await User.findOne({ email });
+    if (user) {
+      if (user.isVerified) return res.status(200).json({ message: "이미 인증된 이메일입니다." });
+
+      user.isVerified = true;
+      await user.save();
+      res.status(200).json({ message: "이메일 인증이 완료되었습니다." });
+    } else {
+      res.status(404).json({ message: "유저를 찾을 수 없습니다.", email });
+    }
+  } catch (error) {
+    let email = null;
+
+    // 만료된 토큰에서 이메일 추출
+    try {
+      const decoded = jwt.decode(welcome);
+      email = decoded?.email || null; // 이메일이 없으면 null
+    } catch (decodeError) {
+      console.error("토큰 디코딩 중 오류:", decodeError);
+    }
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "이메일 인증 토큰이 만료됐습니다.",
+        email, // 이메일 포함
+      });
+    }
+
+    return res.status(500).json({
+      message: "이메일 인증 중 오류가 발생했습니다.",
+      email, // 이메일 포함
+    });
   }
 };
 const signUpController = async (req, res) => {
@@ -59,7 +84,12 @@ const signUpController = async (req, res) => {
 
   try {
     const result = await signUp(email, password);
-    res.json({ result });
+    if (result.message === "회원가입이 완료되었습니다.") {
+      const sendEmail = await sendVerificationLink(email);
+      sendEmail
+        ? res.status(200).json({ result })
+        : res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -81,11 +111,11 @@ const signInController = async (req, res) => {
   }
   try {
     const result = await signIn(email, password);
-    const refreshToken = await bcrypt.hash(result.refreshToken, 10);
+
     res
       .status(200)
       .setHeader("Access-Control-Allow-Credentials", "true")
-      .cookie("refreshToken", refreshToken, {
+      .cookie("_Loya", result.refreshToken, {
         httpOnly: true,
         secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -103,11 +133,11 @@ const signInController = async (req, res) => {
           loginType: result.loginType,
         },
       });
-    console.log("Set Cookie Headers:", res.getHeaders());
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
+      email,
       error: "로그인 중 오류가 발생했습니다.",
     });
   }
@@ -143,8 +173,9 @@ const saveHandsImageController = async (req, res) => {
 };
 
 const refreshTokenController = async (req, res) => {
-  console.log(req.cookies.refreshToken, "cookie");
-  const refreshToken = req.cookies.refreshToken;
+  // console.log(req.cookies._Loya, "cookie");
+  const refreshToken = req.cookies._Loya;
+  console.log(refreshToken, "refreshToken");
   if (!refreshToken) {
     return res.status(401).json({
       success: false,
@@ -153,6 +184,7 @@ const refreshTokenController = async (req, res) => {
   }
   try {
     const result = await refreshTokenService(refreshToken);
+    console.log(result);
     res.status(200).json({ accessToken: result.accessToken });
   } catch (error) {
     return res.status(401).json({
@@ -160,7 +192,6 @@ const refreshTokenController = async (req, res) => {
       message: "리프레시 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.",
     });
   }
-  res.status(500).json({ success: false, message: error.message });
 };
 
 module.exports = {

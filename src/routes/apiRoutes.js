@@ -48,13 +48,5 @@ router.post("/guild/getGuildRecruitments", guildController.getGuildRecruitmentsC
 router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitmentPosterController);
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
 
-router.get("/test", (req, res) => {
-  console.log(req.cookies, "cookie");
-
-  if (req.cookies.refreshToken) {
-    res.status(200).json({ message: "토큰왔음" });
-  } else {
-    res.status(401).json({ message: "토큰없음" });
-  }
-});
+router.get("/test", upload.single("image"), (req, res) => {});
 module.exports = router;

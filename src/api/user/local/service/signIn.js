@@ -2,7 +2,6 @@ const User = require("../entity/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sharp = require("sharp");
-const buffer = require("buffer");
 
 const signIn = async (email, password) => {
   try {
@@ -12,14 +11,17 @@ const signIn = async (email, password) => {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isVerified = user.isVerified;
     if (!isPasswordValid) {
       throw new Error("비밀번호가 일치하지 않습니다.");
     }
-
+    if (!isVerified) {
+      throw new Error("이메일 인증을 완료해주세요.");
+    }
     const accessToken = jwt.sign(
       { userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "30s" }
     );
 
     let refreshToken = user.refreshToken;

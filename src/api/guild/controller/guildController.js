@@ -8,6 +8,7 @@ const postGuildRecruitmentsController = async (req, res) => {
   if (!postData || !publisherData) res.status(400).json({ message: "데이터가 없습니다." });
   try {
     const result = await postGuildRecruitments(postData, publisherData);
+    console.log(result);
     return res.status(200).json({ message: "저장 완료", result });
   } catch (error) {
     console.log(error);
