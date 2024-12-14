@@ -18,6 +18,13 @@ jobs:
         with:
           node-version: "22.11" # 원하는 Node.js 버전으로 변경
 
+      - name: Add SSH host key
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }} # 서버 IP 설정
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 2020 $SERVER_IP >> ~/.ssh/known_hosts
+
       - name: Deploy to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # 비밀 키 설정
@@ -26,7 +33,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          ssh -i private_key -p 2020 -o StrictHostKeyChecking=no $USERNAME@$SERVER_IP << 'EOF'
+          ssh -i private_key -p 2020  $USERNAME@$SERVER_IP << 'EOF'
             cd /home/jhg990508/cleanguild-backend  # 애플리케이션 경로로 변경
             git pull origin main
             npm install
