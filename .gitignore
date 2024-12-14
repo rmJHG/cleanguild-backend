@@ -1,4 +1,6 @@
-/handsImages/
+/assets/images/handsImages/
 /node_modules/
 
 .env
+
+/uploads/

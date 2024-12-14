@@ -153,12 +153,13 @@ const saveHandsImageController = async (req, res) => {
     return res.status(400).json({ message: "ocid가 없습니다." });
   }
   try {
-    const result = await saveHandsImage(user, req.file.buffer, req.body.ocid);
+    const result = await saveHandsImage(user, req.file, req.body.ocid);
 
-    console.log(result);
+    console.log(result, "result");
     res.json({ result });
   } catch (error) {
-    if (error.code === 11000) {
+    console.log(error);
+    if (error.code === 409) {
       return res.status(409).json({
         success: false,
         message: "이미 등록된 캐릭터입니다.",

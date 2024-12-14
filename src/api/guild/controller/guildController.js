@@ -5,6 +5,7 @@ const { getGuildRecruitmentPosterCooltime } = require("../service/getGuildRecrui
 
 const postGuildRecruitmentsController = async (req, res) => {
   const { postData, publisherData } = req.body;
+  console.log(postData);
   if (!postData || !publisherData) res.status(400).json({ message: "데이터가 없습니다." });
   try {
     const result = await postGuildRecruitments(postData, publisherData);

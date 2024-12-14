@@ -30,9 +30,7 @@ const userSchema = new mongoose.Schema({
     sparse: true,
   },
   handsImage: {
-    type: Buffer,
-    contentType: String,
-    originalname: String,
+    type: String,
   },
   handsImageCompareResult: {
     type: Object,

@@ -11,7 +11,7 @@ require("dotenv").config();
 app.use(
   cors({
     origin:
-      process.env.NODE_ENV === "develop"
+      process.env.NODE_ENV === "development"
         ? ["http://localhost:3000", "http://192.168.0.17:3000"]
         : [`https://www.${process.env.CLIENT_URL}`, `https://${process.env.CLIENT_URL}`],
     credentials: true,

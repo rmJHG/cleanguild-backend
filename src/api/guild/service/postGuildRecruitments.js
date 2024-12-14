@@ -12,6 +12,7 @@ const postGuildRecruitments = async (postData, publisherData) => {
       publisherData,
     };
     const result = await currentGuildModel.create(guildPost);
+
     return result;
   } catch (error) {
     console.log(error);

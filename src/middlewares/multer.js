@@ -2,7 +2,6 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const fs = require("fs").promises;
 const path = require("path");
-const User = require("../api/user/local/entity/User");
 
 const upload = multer({
   storage: storage,
@@ -17,28 +16,26 @@ const upload = multer({
   },
 });
 
-const saveFileAndCreateDoc = async (buffer, fileInfo, userId) => {
+const saveFileAndCreateDoc = async (file, userId) => {
+  console.log(file, userId);
+  const buffer = file.buffer;
+  if (!file || !file.originalname) {
+    throw new Error("파일 정보가 유효하지 않습니다.");
+  }
+
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  const filename = uniqueSuffix + path.extname(fileInfo.originalname);
-  const filepath = path.join("uploads", filename);
+  const filename = uniqueSuffix + path.extname(file.originalname);
+  const userDir = path.join("uploads", "handsImage", userId.toString());
+
+  // 사용자 디렉토리가 존재하지 않으면 생성
+  await fs.mkdir(userDir, { recursive: true });
+
+  const filepath = path.join(userDir, filename);
 
   // 파일 저장
   await fs.writeFile(filepath, buffer);
 
-  // DB에 이미지 문서 생성
-  const image = new Image({
-    filename: filename,
-    path: filepath,
-    originalname: fileInfo.originalname,
-    mimetype: fileInfo.mimetype,
-    size: buffer.length,
-  });
-
-  await image.save();
-
-  // User 문서에 이미지 추가
-  await User.findByIdAndUpdate(userId, { $push: { handsImages: image._id } }, { new: true });
-
-  return image;
+  return { path: filepath, filename };
 };
+
 module.exports = { upload, saveFileAndCreateDoc };

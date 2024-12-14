@@ -21,7 +21,7 @@ const signIn = async (email, password) => {
     const accessToken = jwt.sign(
       { userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) },
       process.env.JWT_SECRET,
-      { expiresIn: "30s" }
+      { expiresIn: "1h" }
     );
 
     let refreshToken = user.refreshToken;

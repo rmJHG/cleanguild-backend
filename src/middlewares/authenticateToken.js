@@ -4,12 +4,12 @@ const authenticateToken = (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
-
     if (!token) {
       return res.status(401).json({ message: "토큰이 없습니다." });
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      console.log(err);
       if (err) {
         // 에러 타입에 따른 구체적인 메시지 처리
         if (err.name === "TokenExpiredError") {
