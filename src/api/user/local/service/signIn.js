@@ -1,10 +1,16 @@
 const User = require("../entity/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const sharp = require("sharp");
+const KakaoUser = require("../../kakao/entity/KakaoUser");
 
 const signIn = async (email, password) => {
   try {
+    const kakaoUser = await KakaoUser.findOne({
+      email,
+    });
+    if (kakaoUser) {
+      throw new Error("카카오 계정으로 로그인해주세요.");
+    }
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error("존재하지 않는 이메일입니다.");
@@ -49,21 +55,6 @@ const signIn = async (email, password) => {
       message = "새로운 리프레시 토큰이 발급되었습니다.";
     }
 
-    let handsImageBase64 = null;
-    if (user.handsImage) {
-      try {
-        const handsImage = await sharp(Buffer.from(user.handsImage))
-          .jpeg({
-            quality: 100,
-            progressive: true,
-          })
-          .toBuffer();
-        handsImageBase64 = `data:image/jpeg;base64,${handsImage.toString("base64")}`;
-      } catch (imageError) {
-        console.error("이미지 처리 중 오류:", imageError);
-        // 이미지 처리 실패시에도 로그인은 계속 진행
-      }
-    }
     return {
       message,
       email: user.email,
@@ -71,7 +62,6 @@ const signIn = async (email, password) => {
       refreshToken,
       ocid: user.ocid,
       isVerified: user.isVerified,
-      handsImage: handsImageBase64,
     };
   } catch (error) {
     console.log(error);

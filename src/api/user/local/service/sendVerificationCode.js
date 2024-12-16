@@ -29,10 +29,10 @@ const sendVerificationLink = async (email) => {
   const mailOptions = {
     from: process.env.ADMIN_EMAIL,
     to: email,
-    subject: "CLEAN GUILD 인증 코드 발송",
+    subject: "MAPLEGREMIO 인증 코드 발송",
     html: `
        <div style="text-align: center;">
-      <h1>CLEAN GUILD 이메일 인증</h1>
+      <h1>MAPLEGREMIO 이메일 인증</h1>
       <p>아래 링크를 클릭하여 이메일 인증을 완료해주세요</p>
       <a href="${verificationLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #ffffff; border: 2px solid #000000; text-decoration: none; color: #000000; margin: 20px 0;">이메일 인증하기</a>
 

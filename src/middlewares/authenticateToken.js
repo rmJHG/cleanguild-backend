@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const authenticateToken = (req, res, next) => {
+  console.log(req.headers);
   try {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
@@ -21,6 +22,7 @@ const authenticateToken = (req, res, next) => {
       }
 
       req.user = user; // 다음 미들웨어에서 사용할 수 있도록
+      console.log(req.user);
       next();
     });
   } catch (error) {

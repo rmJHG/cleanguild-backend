@@ -2,6 +2,7 @@ const { getFixelDiff } = require("../../../../utils/getFixelDiff");
 const { getSsim } = require("../../../../utils/getSsim");
 const User = require("../entity/User");
 const { saveFileAndCreateDoc } = require("../../../../middlewares/multer");
+const KakaoUser = require("../../kakao/entity/KakaoUser");
 
 const saveHandsImage = async (userData, imageFile, ocid) => {
   const { userId } = userData;
@@ -11,7 +12,8 @@ const saveHandsImage = async (userData, imageFile, ocid) => {
     throw new Error("유저가 존재하지 않습니다.");
   }
   const existingUser = await User.findOne({ ocid });
-  if (existingUser) {
+  const existingKakaoUser = await KakaoUser.findOne({ ocid });
+  if (existingUser || existingKakaoUser) {
     const error = new Error("이미 등록된 캐릭터입니다.");
     error.code = 409;
     throw error;

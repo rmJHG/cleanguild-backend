@@ -1,7 +1,7 @@
 const path = require("path");
 
 const allImages = [
-  path.join(__dirname, "../assets/images/handsImages", "input1.jpg"),
+  path.join(__dirname, "../assets/images/handsImages", "input1.jpeg"),
   path.join(__dirname, "../assets/images/handsImages", "input2.jpeg"),
   path.join(__dirname, "../assets/images/handsImages", "input3.jpg"),
   path.join(__dirname, "../assets/images/handsImages", "input4.jpg"),

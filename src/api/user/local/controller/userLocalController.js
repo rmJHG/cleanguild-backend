@@ -5,6 +5,7 @@ const { sendVerificationLink } = require("../service/sendVerificationCode");
 const { refreshTokenService } = require("../service/refreshToken");
 const User = require("../entity/User");
 const jwt = require("jsonwebtoken");
+const KakaoUser = require("../../kakao/entity/KakaoUser");
 
 const resentEmailVerificationCodeController = async (req, res) => {
   const { email } = req.body;
@@ -81,7 +82,10 @@ const signUpController = async (req, res) => {
     res.status(409).json({ message: "이미 존재하는 이메일입니다." });
     return;
   }
-
+  if (await KakaoUser.findOne({ email })) {
+    res.status(409).json({ message: "이미 카카오로 가입한 이메일입니다." });
+    return;
+  }
   try {
     const result = await signUp(email, password);
     if (result.message === "회원가입이 완료되었습니다.") {
@@ -101,17 +105,15 @@ const signUpController = async (req, res) => {
 
 const signInController = async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password, "email, password");
   if (!email || !password) {
     res.status(400).json({ message: "이메일 또는 비밀번호가 입력되지 않았습니다." });
     return;
   }
-  if (!(await User.findOne({ email }))) {
-    res.status(409).json({ message: "유저가 존재하지 않습니다." });
-    return;
-  }
+
   try {
     const result = await signIn(email, password);
-
+    console.log(result, "result");
     res
       .status(200)
       .setHeader("Access-Control-Allow-Credentials", "true")
@@ -128,7 +130,6 @@ const signInController = async (req, res) => {
           email: result.email,
           accessToken: result.accessToken,
           ocid: result.ocid,
-          handsImage: result.handsImage,
           isVerified: result.isVerified,
           loginType: result.loginType,
         },

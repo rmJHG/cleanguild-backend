@@ -1,22 +1,25 @@
 const { kakaoSignIn } = require("../service/kakaoSignin");
+const { refreshTokenService } = require("../service/refreshToken");
 const { saveHandsImageForKakao } = require("../service/saveHandsImageForKakao");
 
 const kakaoSignInController = async (req, res) => {
-  const kakaoData = res.user;
+  const kakaoData = req.user;
   const result = await kakaoSignIn(kakaoData);
   res.json({ result });
 };
 
 const saveHandsImageController = async (req, res) => {
+  const kakaoData = req.user;
+
   try {
     if (!req.file) return res.status(400).json({ message: "이미지 파일이 없습니다." });
 
     if (!req.body.ocid) return res.status(400).json({ message: "ocid가 없습니다." });
-    if (!res.user || !res.user.kakao_account) {
+    if (!kakaoData || !kakaoData.kakao_account) {
       return res.status(401).json({ message: "카카오 계정 정보가 없습니다." });
     }
-    console.log(req.file.buffer);
-    const result = await saveHandsImageForKakao(res.user.kakao_account.email, req.file.buffer, req.body.ocid);
+    console.log(req.file);
+    const result = await saveHandsImageForKakao(kakaoData.kakao_account.email, req.file, req.body.ocid);
 
     console.log(result);
     res.json({ result });
@@ -34,8 +37,30 @@ const saveHandsImageController = async (req, res) => {
     });
   }
 };
+const refreshTokenController = async (req, res) => {
+  // console.log(req.cookies._Loya, "cookie");
+  const refreshToken = req.cookies._Loya;
+  console.log(refreshToken, "refreshToken");
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: "리프레시 토큰이 없습니다. 다시 로그인해주세요.",
+    });
+  }
+  try {
+    const result = await refreshTokenService(refreshToken);
+    console.log(result);
+    res.status(200).json({ accessToken: result.accessToken });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "리프레시 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.",
+    });
+  }
+};
 
 module.exports = {
   kakaoSignInController,
   saveHandsImageController,
+  refreshTokenController,
 };
