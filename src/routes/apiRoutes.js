@@ -71,6 +71,7 @@ router.post("/logout", (req, res) => {
   res.clearCookie("_Loya", {
     httpOnly: true,
     path: "/",
+    domain: process.env.NODE_ENV === "production" ? "maplegremio.com" : "localhost",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
   });

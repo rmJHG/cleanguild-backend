@@ -119,7 +119,7 @@ const signInController = async (req, res) => {
       .setHeader("Access-Control-Allow-Credentials", "true")
       .cookie("_Loya", result.refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         sameSite: "lax",
         path: "/",
