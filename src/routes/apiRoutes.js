@@ -64,7 +64,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   console.log(req.file);
 
   const save = await saveImageFile(req.file);
-  res.json({ url: save.path });
+  res.json({ url: `/uploads/post${save.filename}` });
 });
 
 router.post("/logout", (req, res) => {
