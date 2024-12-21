@@ -27,7 +27,7 @@ const saveHandsImageForKakao = async (email, imageFile, ocid) => {
 
     const compareResult = {
       ssim: Math.max(...ssim.map((item) => item.ssim)),
-      fixelDiff: Math.min(...fixelDiff),
+      fixelDiff: Math.min(...fixelDiff.map((item) => item.diffRatio)),
     };
     kakaoUser.ocid = ocid;
     kakaoUser.handsImageCompareResult = compareResult;

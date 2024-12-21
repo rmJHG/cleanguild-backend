@@ -26,7 +26,12 @@ const saveFileAndCreateDoc = async (file, userId) => {
 
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
   const filename = uniqueSuffix + path.extname(file.originalname);
-  const userDir = path.join("uploads", "handsImage", userId.toString());
+  const baseDir =
+    process.env.NODE_ENV === "production"
+      ? "/home/jhg990508/cleanguild-static/images"
+      : path.join(__dirname, "../../images/handsImage");
+
+  const userDir = path.join(baseDir, userId.toString());
 
   // 사용자 디렉토리가 존재하지 않으면 생성
   await fs.mkdir(userDir, { recursive: true });
@@ -47,7 +52,13 @@ const saveImageFile = async (file) => {
 
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
   const filename = uniqueSuffix + path.extname(file.originalname);
-  const userDir = path.join("/home/jhg990508/cleanguild-static/images", "post"); // 경로 수정
+
+  const baseDir =
+    process.env.NODE_ENV === "production"
+      ? "/home/jhg990508/cleanguild-static/images"
+      : path.join(__dirname, "../../images/post");
+
+  const userDir = path.join(baseDir);
 
   // 사용자 디렉토리가 존재하지 않으면 생성
   await fs.mkdir(userDir, { recursive: true });

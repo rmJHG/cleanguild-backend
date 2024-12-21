@@ -9,6 +9,7 @@ const imageController = require("../api/handsData/image/controller/imageControll
 const userLocalController = require("../api/user/local/controller/userLocalController");
 const userKakaoController = require("../api/user/kakao/controller/userKakaoController");
 const guildController = require("../api/guild/controller/guildController");
+const { test } = require("../api/test/test");
 
 const checkLoginType = (req, res, next) => {
   const loginType = req.headers["logintype"];
@@ -53,13 +54,15 @@ router.post(
   kakaoAuthenticateToken,
   guildController.postGuildRecruitmentsController
 );
+
+//길드 api
 router.post("/guild/getGuildRecruitments", guildController.getGuildRecruitmentsController);
 router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitmentPosterController);
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
+router.get("/guild/getGuildManager", guildController.getGuildManagerController);
+router.post("/guild/postGuildManager", guildController.postGuildManagerController);
 
-router.post("/test", authenticateToken, (req, res) => {
-  res.json({ message: "test" });
-});
+router.post("/test", upload.single("image"), test);
 router.post("/upload", upload.single("image"), async (req, res) => {
   console.log(req.file);
 

@@ -29,7 +29,7 @@ const saveHandsImage = async (userData, imageFile, ocid) => {
     const fixelDiff = await getFixelDiff(image.path);
     const compareResult = {
       ssim: Math.max(...ssim.map((item) => item.ssim)),
-      fixelDiff: Math.min(...fixelDiff),
+      fixelDiff: Math.min(...fixelDiff.map((item) => item.diffRatio)),
     };
 
     user.handsImage = image.path;

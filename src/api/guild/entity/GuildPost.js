@@ -42,6 +42,8 @@ const serverList = [
   ["nova", "노바"],
   ["arcane", "아케인"],
   ["enosis", "이노시스"],
+  ["eos", "에오스"],
+  ["helios", "헬리오스"],
   ["reboot", "리부트"],
   ["reboot", "리부트2"],
   ["burning", "버닝"],

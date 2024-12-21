@@ -10,7 +10,6 @@ const authenticateToken = (req, res, next) => {
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      console.log(err);
       if (err) {
         // 에러 타입에 따른 구체적인 메시지 처리
         if (err.name === "TokenExpiredError") {
@@ -22,7 +21,6 @@ const authenticateToken = (req, res, next) => {
       }
 
       req.user = user; // 다음 미들웨어에서 사용할 수 있도록
-      console.log(req.user);
       next();
     });
   } catch (error) {

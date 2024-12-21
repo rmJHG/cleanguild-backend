@@ -35,14 +35,18 @@ const findMainCharacter = async (req, res) => {
     const ssim = await getSsim(img.buffer);
     const fixelDiff = await getFixelDiff(img.buffer);
 
-    if (Math.max(...ssim.map((item) => item.ssim)) < 0.3 && Math.min(...fixelDiff) > 60000)
+    if (Math.max(...ssim.map((item) => item.ssim)) < 0.3 && Math.min(...fixelDiff.map((item) => item.diffRatio)) < 0.3)
       return res.status(400).json({ error: "이미지 오류", message: "핸즈 이미지가 아닌 것 같습니다." });
 
     const characterNames = await extractTextFromImage(img.buffer);
     const charsData = await Promise.all(characterNames.map((character_name) => getMainChar(character_name)));
     const duplicateNames = findDuplicate(charsData);
     const result = await Promise.all(duplicateNames.map((character_name) => getCharData(character_name)));
-
+    console.log(
+      characterNames,
+      Math.max(...ssim.map((item) => item.ssim)),
+      Math.min(...fixelDiff.map((item) => item.diffRatio))
+    );
     res.json({ result });
   } catch (error) {
     console.error("서버 오류:", error);
