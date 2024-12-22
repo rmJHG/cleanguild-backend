@@ -59,8 +59,12 @@ router.post(
 router.post("/guild/getGuildRecruitments", guildController.getGuildRecruitmentsController);
 router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitmentPosterController);
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
+
+//길드 관리자 api
 router.get("/guild/getGuildManager", guildController.getGuildManagerController);
 router.post("/guild/postGuildManager", guildController.postGuildManagerController);
+router.put("/guild/updateGuildManager", guildController.updateGuildManagerController);
+router.delete("/guild/deleteGuildManager", guildController.deleteGuildManagerController);
 
 router.post("/test", upload.single("image"), test);
 router.post("/upload", upload.single("image"), async (req, res) => {

@@ -54,7 +54,9 @@ const getGuildRecruitmentPosterCooltimeController = async (req, res) => {
 };
 
 const getGuildManagerController = async (req, res) => {
-  const { world_name, guild_name } = req.body;
+  console.log(req.query);
+  const { world_name, guild_name } = req.query;
+  console.log(world_name, guild_name);
   if (!world_name || !guild_name) return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
   try {
     const guildManager = await GuildManager.findOne({ world_name, guild_name });
@@ -88,6 +90,50 @@ const postGuildManagerController = async (req, res) => {
   }
 };
 
+const updateGuildManagerController = async (req, res) => {
+  const { world_name, guild_name, guildManagers } = req.body;
+  if (!world_name || !guild_name || !guildManagers)
+    return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
+  try {
+    const guildManager = await GuildManager.findOneAndUpdate(
+      { world_name, guild_name },
+      {
+        guildManagers,
+      }
+    );
+    console.log(guildManager);
+
+    return res.status(200).json({ message: "업데이트 완료" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "업데이트 실패", error });
+  }
+};
+
+const deleteGuildManagerController = async (req, res) => {
+  const { world_name, guild_name, character_name } = req.body;
+  if (!world_name || !guild_name || !character_name) {
+    return res.status(400).json({ message: "데이터가 유효하지 않습니다." });
+  }
+  try {
+    const guildManager = await GuildManager.findOne({ world_name, guild_name });
+    if (!guildManager) {
+      return res.status(404).json({ message: "길드 매니저를 찾을 수 없습니다." });
+    }
+
+    // guildManagers 배열에서 character_name이 일치하는 항목 삭제
+    guildManager.guildManagers = guildManager.guildManagers.filter(
+      (manager) => manager.character_name !== character_name
+    );
+
+    await guildManager.save();
+
+    return res.status(200).json({ message: "삭제 완료", data: guildManager });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "삭제 실패", error });
+  }
+};
 module.exports = {
   postGuildRecruitmentsController,
   getGuildRecruitmentsController,
@@ -95,4 +141,6 @@ module.exports = {
   getGuildRecruitmentPosterCooltimeController,
   getGuildManagerController,
   postGuildManagerController,
+  updateGuildManagerController,
+  deleteGuildManagerController,
 };
