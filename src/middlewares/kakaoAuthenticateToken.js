@@ -16,14 +16,14 @@ const kakaoAuthenticateToken = async (req, res, next) => {
     const kakaoData = await kakaoCheck.json();
 
     if (kakaoData.code === -401) {
-      res.status(401).json({ message: "토큰이 만료되었습니다." });
+      return res.status(401).json({ message: "토큰이 만료되었습니다." });
     }
 
     req.user = kakaoData;
     console.log(req.user);
     next();
   } catch (error) {
-    res.status(500).json({ message: "서버 오류가 발생했습니다." });
+    return res.status(500).json({ message: "서버 오류가 발생했습니다." });
   }
 };
 

@@ -4,7 +4,7 @@ const GuildManagerSchema = new mongoose.Schema({
   world_name: { type: String, required: true },
   guild_name: { type: String, required: true },
   guildManagers: {
-    type: [{ character_name: String, character_image: String, character_level: Number }],
+    type: [String],
     required: true,
   },
 });

@@ -11,6 +11,7 @@ const authenticateToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
+        console.log(err);
         // 에러 타입에 따른 구체적인 메시지 처리
         if (err.name === "TokenExpiredError") {
           return res.status(401).json({ message: "토큰이 만료되었습니다." });

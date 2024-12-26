@@ -61,7 +61,9 @@ const getGuildManagerController = async (req, res) => {
   try {
     const guildManager = await GuildManager.findOne({ world_name, guild_name });
     console.log(guildManager);
-
+    if (!guildManager) {
+      return res.status(404).json({ message: "길드 매니저를 찾을 수 없습니다." });
+    }
     return res.status(200).json(guildManager);
   } catch (error) {
     console.log(error);
@@ -111,8 +113,8 @@ const updateGuildManagerController = async (req, res) => {
 };
 
 const deleteGuildManagerController = async (req, res) => {
-  const { world_name, guild_name, character_name } = req.body;
-  if (!world_name || !guild_name || !character_name) {
+  const { world_name, guild_name, ocid } = req.body;
+  if (!world_name || !guild_name || !ocid) {
     return res.status(400).json({ message: "데이터가 유효하지 않습니다." });
   }
   try {
@@ -121,10 +123,7 @@ const deleteGuildManagerController = async (req, res) => {
       return res.status(404).json({ message: "길드 매니저를 찾을 수 없습니다." });
     }
 
-    // guildManagers 배열에서 character_name이 일치하는 항목 삭제
-    guildManager.guildManagers = guildManager.guildManagers.filter(
-      (manager) => manager.character_name !== character_name
-    );
+    guildManager.guildManagers = guildManager.guildManagers.filter((currentOcid) => currentOcid !== ocid);
 
     await guildManager.save();
 

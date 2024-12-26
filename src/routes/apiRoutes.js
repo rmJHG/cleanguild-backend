@@ -13,6 +13,7 @@ const { test } = require("../api/test/test");
 
 const checkLoginType = (req, res, next) => {
   const loginType = req.headers["logintype"];
+  console.log(loginType);
   if (loginType === "local") {
     return authenticateToken(req, res, next);
   } else if (loginType === "kakao") {
@@ -61,7 +62,7 @@ router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitm
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
 
 //길드 관리자 api
-router.get("/guild/getGuildManager", guildController.getGuildManagerController);
+router.get("/guild/getGuildManager", checkLoginType, guildController.getGuildManagerController);
 router.post("/guild/postGuildManager", guildController.postGuildManagerController);
 router.put("/guild/updateGuildManager", guildController.updateGuildManagerController);
 router.delete("/guild/deleteGuildManager", guildController.deleteGuildManagerController);
