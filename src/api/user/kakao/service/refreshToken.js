@@ -17,7 +17,7 @@ const refreshTokenService = async (refreshToken) => {
 
     return { accessToken: accessToken.access_token, message: "새로운 액세스 토큰이 발급되었습니다." };
   } catch (error) {
-    return { message: "토큰 재발급에 실패했습니다." };
+    return { message: "리프레쉬 토큰이 만료되었습니다." };
   }
 };
 

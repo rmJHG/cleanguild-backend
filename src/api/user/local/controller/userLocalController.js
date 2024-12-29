@@ -187,12 +187,18 @@ const refreshTokenController = async (req, res) => {
   try {
     const result = await refreshTokenService(refreshToken);
     console.log(result);
+    if (result.message === "리프레쉬 토큰이 만료되었습니다.") {
+      return res.status(401).json({
+        success: false,
+        message: "리프레쉬 토큰이 만료되었습니다.",
+      });
+    }
     res.status(200).json({ accessToken: result.accessToken });
   } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "리프레시 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.",
-    });
+    // return res.status(401).json({
+    //   success: false,
+    //   message: "리프레쉬 토큰이 만료되었습니다.",
+    // });
   }
 };
 

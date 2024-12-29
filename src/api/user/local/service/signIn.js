@@ -46,6 +46,7 @@ const signIn = async (email, password) => {
 
     // 필요한 경우에만 새로운 리프레시 토큰 발급
     if (needsNewRefreshToken) {
+      console.log("로그인시도 : 새로운 리프레시 토큰 발급");
       refreshToken = jwt.sign(
         { userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) },
         process.env.JWT_SECRET,

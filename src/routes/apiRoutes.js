@@ -13,7 +13,6 @@ const { test } = require("../api/test/test");
 
 const checkLoginType = (req, res, next) => {
   const loginType = req.headers["logintype"];
-  console.log(loginType);
   if (loginType === "local") {
     return authenticateToken(req, res, next);
   } else if (loginType === "kakao") {
