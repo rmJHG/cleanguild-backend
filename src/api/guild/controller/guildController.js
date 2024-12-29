@@ -62,12 +62,13 @@ const getGuildManagerController = async (req, res) => {
     const guildManager = await GuildManager.findOne({ world_name, guild_name });
     console.log(guildManager);
     if (!guildManager) {
-      return res.status(404).json({ message: "길드 매니저를 찾을 수 없습니다." });
+      const newGuildManager = new GuildManager({ world_name, guild_name, guildManagers: [] });
+      await newGuildManager.save();
     }
-    return res.status(200).json(guildManager);
+    return res.status(200).json(guildManager.guildManagers);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "게시글 데이터를 가져오는데 실패했습니다.", error });
+    return res.status(500).json({ message: "매니저 데이터를 가져오는데 실패했습니다.", error });
   }
 };
 
@@ -80,12 +81,8 @@ const postGuildManagerController = async (req, res) => {
     if (guildManager) {
       guildManager.guildManagers = guildManagers;
       await guildManager.save();
-    } else {
-      const newGuildManager = new GuildManager({ world_name, guild_name, guildManagers });
-      await newGuildManager.save();
+      return res.status(200).json({ message: "저장완료" });
     }
-
-    return res.status(200).json({ message: "저장완료" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "저장실패", error });

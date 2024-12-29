@@ -3,9 +3,22 @@ const { refreshTokenService } = require("../service/refreshToken");
 const { saveHandsImageForKakao } = require("../service/saveHandsImageForKakao");
 
 const kakaoSignInController = async (req, res) => {
-  const kakaoData = req.user;
-  const result = await kakaoSignIn(kakaoData);
-  res.json({ result });
+  try {
+    const kakaoData = req.user;
+    const result = await kakaoSignIn(kakaoData);
+    if (result.message === "로컬 계정으로 로그인해주세요.") {
+      return res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+    res.json({ result });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 const saveHandsImageController = async (req, res) => {

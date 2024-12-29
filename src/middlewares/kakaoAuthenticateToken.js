@@ -20,7 +20,6 @@ const kakaoAuthenticateToken = async (req, res, next) => {
     }
 
     req.user = kakaoData;
-    console.log(req.user);
     next();
   } catch (error) {
     return res.status(500).json({ message: "서버 오류가 발생했습니다." });

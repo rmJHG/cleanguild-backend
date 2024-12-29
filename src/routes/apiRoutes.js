@@ -19,6 +19,7 @@ const checkLoginType = (req, res, next) => {
   } else if (loginType === "kakao") {
     return kakaoAuthenticateToken(req, res, next);
   }
+  return res.status(401).json({ message: "올바른 요청이 아닙니다." });
 };
 //유저 api
 router.post("/user/local/checkEmail", userLocalController.checkEmailController);
