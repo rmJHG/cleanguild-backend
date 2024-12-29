@@ -20,6 +20,7 @@ const checkLoginType = (req, res, next) => {
   }
   return res.status(401).json({ message: "올바른 요청이 아닙니다." });
 };
+
 //유저 api
 router.post("/user/local/checkEmail", userLocalController.checkEmailController);
 router.get("/user/local/verifyEmail", userLocalController.verifyEmailController);
@@ -68,6 +69,7 @@ router.put("/guild/updateGuildManager", guildController.updateGuildManagerContro
 router.delete("/guild/deleteGuildManager", guildController.deleteGuildManagerController);
 
 router.post("/test", upload.single("image"), test);
+
 router.post("/upload", upload.single("image"), async (req, res) => {
   console.log(req.file);
 
@@ -75,15 +77,4 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   res.json({ url: `/uploads/post/${save.filename}` });
 });
 
-router.post("/logout", (req, res) => {
-  res.clearCookie("_Loya", {
-    httpOnly: true,
-    path: "/",
-    domain: process.env.NODE_ENV === "production" ? "maplegremio.com" : "localhost",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-  console.log("쿠키 삭제완료");
-  res.status(200).send("Logged out");
-});
 module.exports = router;

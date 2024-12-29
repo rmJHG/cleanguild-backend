@@ -54,9 +54,9 @@ const saveImageFile = async (file) => {
   const filename = uniqueSuffix + path.extname(file.originalname);
 
   const baseDir =
-    process.env.NODE_ENV === "production"
-      ? "/home/jhg990508/cleanguild-static/images"
-      : path.join(__dirname, "../../images/post");
+    process.env.NODE_ENV === "development"
+      ? path.join(__dirname, "../../images/post")
+      : "/home/jhg990508/cleanguild-static/images";
 
   const userDir = path.join(baseDir);
 

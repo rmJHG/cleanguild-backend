@@ -16,7 +16,7 @@ const kakaoSignIn = async (kakaoData) => {
       isVerified: true,
     });
     await user.save();
-    return { message: "로그인 완료" };
+    return user;
   }
   return kakaoUser;
 };
