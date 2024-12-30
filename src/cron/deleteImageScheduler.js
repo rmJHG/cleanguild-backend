@@ -9,12 +9,12 @@ const deleteImageScheduler = async () => {
     const imagesToDelete = await Image.find({ uploadTime: { $lte: oneWeekAgo } });
 
     for (const image of imagesToDelete) {
-      await fs.unlink(image.path); // 파일 삭제
-      await image.remove(); // 데이터베이스에서 이미지 문서 삭제
+      await fs.unlink(image.path);
+      await image.deleteOne({ _id: image._id });
       console.log(`이미지 ${image.filename}가 삭제되었습니다.`);
     }
   } catch (error) {
     console.error(`이미지 삭제 중 오류 발생: ${error}`);
   }
 };
-cron.schedule("0 0 * * *", deleteImageScheduler);
+cron.schedule("0 * * * *", deleteImageScheduler);
