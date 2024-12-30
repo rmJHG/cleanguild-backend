@@ -6,8 +6,10 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const app = express();
 const port = 8080;
+
 require("dotenv").config();
 require("./src/cron/deleteImageScheduler");
+
 app.use(express.json({ limit: "10mb" })); // JSON 요청 크기 제한 증가
 app.use(express.urlencoded({ limit: "10mb", extended: true })); // URL-encoded 요청 크기 제한 증가
 
