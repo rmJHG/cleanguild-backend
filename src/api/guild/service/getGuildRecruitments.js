@@ -1,18 +1,33 @@
 const { getGuildModel } = require("../entity/GuildPost");
 
-const getGuildRecruitments = async (world_name) => {
+const getGuildRecruitments = async (world_name, page = 0) => {
   try {
     const currentGuildModel = getGuildModel(world_name);
+    const itemsPerPage = 20;
     const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    console.log(currentGuildModel);
-    const recruitments = await currentGuildModel.find({
+
+    const totalItems = await currentGuildModel.countDocuments({
       "postData.postDate": {
         $gte: oneWeekAgo,
       },
-    }); // 컬렉션의 모든 데이터 가져오기
+    });
 
-    console.log(recruitments);
-    return recruitments;
+    // 전체 페이지 수 계산
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const recruitments = await currentGuildModel
+      .find({
+        "postData.postDate": {
+          $gte: oneWeekAgo,
+        },
+      })
+      .skip(page * itemsPerPage)
+      .limit(itemsPerPage)
+      .sort({ "postData.postDate": -1 });
+
+    console.log(Math.ceil(recruitments.length / itemsPerPage));
+
+    return { recruitments, totalPages };
   } catch (error) {
     console.log(error);
     throw error;
@@ -20,3 +35,9 @@ const getGuildRecruitments = async (world_name) => {
 };
 
 module.exports = { getGuildRecruitments };
+
+// {
+//   "postData.postDate": {
+//     $gte: oneWeekAgo,
+//   },
+// }

@@ -77,4 +77,5 @@ const saveImageFile = async (file) => {
   await newImage.save();
   return { path: filepath, filename };
 };
+
 module.exports = { upload, saveFileAndCreateDoc, saveImageFile };

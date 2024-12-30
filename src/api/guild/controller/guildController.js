@@ -19,10 +19,10 @@ const postGuildRecruitmentsController = async (req, res) => {
 };
 
 const getGuildRecruitmentsController = async (req, res) => {
-  const { world_name } = req.body;
+  const { world_name, page } = req.body;
   if (!world_name) return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
   try {
-    const result = await getGuildRecruitments(world_name);
+    const result = await getGuildRecruitments(world_name, page);
 
     return res.status(200).json(result);
   } catch (error) {
