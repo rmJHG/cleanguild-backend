@@ -35,6 +35,7 @@ const findMainCharacter = async (req, res) => {
     const ssim = await getSsim(img.buffer);
     const fixelDiff = await getFixelDiff(img.buffer);
 
+    console.log(Math.max(...ssim.map((item) => item.ssim)), Math.min(...fixelDiff.map((item) => item.diffRatio)));
     if (Math.max(...ssim.map((item) => item.ssim)) < 0.3 && Math.min(...fixelDiff.map((item) => item.diffRatio)) < 0.3)
       return res.status(400).json({ error: "이미지 오류", message: "핸즈 이미지가 아닌 것 같습니다." });
 

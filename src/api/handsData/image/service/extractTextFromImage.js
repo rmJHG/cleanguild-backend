@@ -21,7 +21,6 @@ const extractTextFromImage = async (img) => {
 
     const textArray = ret.data.text.split("\n");
 
-    console.log(textArray);
     const filteredArray = [];
 
     //정규표현식(num, kor, eng, spec)
@@ -46,17 +45,12 @@ const extractTextFromImage = async (img) => {
       });
     });
 
-    console.log(
-      filteredArray
-        .filter((e) => (e.length > 1 && numberPattern.test(e)) || koreanPattern.test(e) || englishPattern.test(e))
-        .sort((a, b) => a.length - b.length)
-    );
-
-    console.log(filteredArray);
     const shuffled = filteredArray.sort(() => 0.5 - Math.random());
-    console.log(shuffled.slice(0, 10));
-    return shuffled.slice(0, 10);
-    // return filteredArray;
+
+    const result = filteredArray
+      .filter((e) => (e.length > 1 && numberPattern.test(e)) || koreanPattern.test(e) || englishPattern.test(e))
+      .sort((a, b) => a.length - b.length);
+    return result;
   } catch (error) {
     throw error;
   } finally {

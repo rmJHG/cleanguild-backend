@@ -44,11 +44,6 @@ const serverList = [
   ["enosis", "이노시스"],
   ["eos", "에오스"],
   ["helios", "헬리오스"],
-  ["reboot", "리부트"],
-  ["reboot", "리부트2"],
-  ["burning", "버닝"],
-  ["burning", "버닝2"],
-  ["burning", "버닝3"],
 ];
 
 const getGuildModel = (serverName) => {
@@ -59,6 +54,9 @@ const getGuildModel = (serverName) => {
   }
 
   const collectionName = `${serverInfo[0]}_guildRecruitments`;
+  if (mongoose.models[collectionName]) {
+    return mongoose.model(collectionName);
+  }
   return mongoose.model(collectionName, GuildRecruitmentSchema);
 };
 

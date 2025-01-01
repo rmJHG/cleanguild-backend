@@ -63,6 +63,7 @@ router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitm
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
 
 //길드 관리자 api
+router.get("/guild/getUserPostHistory", checkLoginType, guildController.getUserPostHistoryController);
 router.get("/guild/getGuildManager", checkLoginType, guildController.getGuildManagerController);
 router.post("/guild/postGuildManager", guildController.postGuildManagerController);
 router.put("/guild/updateGuildManager", guildController.updateGuildManagerController);

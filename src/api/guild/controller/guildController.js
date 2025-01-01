@@ -3,6 +3,7 @@ const { postGuildRecruitments } = require("../service/postGuildRecruitments");
 const { getGuildRecruitmentPoster } = require("../service/getGuildRecruitmentPoster");
 const { getGuildRecruitmentPosterCooltime } = require("../service/getGuildRecruitmentPosterCooltime");
 const GuildManager = require("../entity/GuildManager");
+const { getUserPostHistoryService } = require("../service/getUserPostHistory");
 
 const postGuildRecruitmentsController = async (req, res) => {
   const { postData, publisherData } = req.body;
@@ -130,6 +131,22 @@ const deleteGuildManagerController = async (req, res) => {
     return res.status(500).json({ message: "삭제 실패", error });
   }
 };
+
+const getUserPostHistoryController = async (req, res) => {
+  const { email } = req.query;
+
+  !email && res.status(400).json({ message: "이메일을 입력해주세요." });
+
+  try {
+    const response = await getUserPostHistoryService(email);
+
+    !response && res.status(404).json({ message: "데이터를 찾을 수 없습니다." });
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "게시글 데이터를 가져오는데 실패했습니다.", error });
+  }
+};
 module.exports = {
   postGuildRecruitmentsController,
   getGuildRecruitmentsController,
@@ -139,4 +156,5 @@ module.exports = {
   postGuildManagerController,
   updateGuildManagerController,
   deleteGuildManagerController,
+  getUserPostHistoryController,
 };
