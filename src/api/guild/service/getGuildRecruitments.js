@@ -35,9 +35,3 @@ const getGuildRecruitments = async (world_name, page = 0) => {
 };
 
 module.exports = { getGuildRecruitments };
-
-// {
-//   "postData.postDate": {
-//     $gte: oneWeekAgo,
-//   },
-// }

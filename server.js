@@ -20,7 +20,7 @@ app.use(
         ? ["http://localhost:3000", "http://192.168.0.17:3000"]
         : [`https://www.${process.env.CLIENT_URL}`, `https://${process.env.CLIENT_URL}`],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie", "loginType"],
     exposedHeaders: ["set-cookie"],
   })

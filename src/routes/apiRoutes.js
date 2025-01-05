@@ -57,11 +57,20 @@ router.post(
   guildController.postGuildRecruitmentsController
 );
 
-//길드 api
+//길드 홍보 api
 router.post("/guild/getGuildRecruitments", guildController.getGuildRecruitmentsController);
 router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitmentPosterController);
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
-
+router.patch(
+  "/guild/updateGuildRecruitmentPoster",
+  checkLoginType,
+  guildController.updateGuildRecruitmentPosterController
+);
+router.delete(
+  "/guild/deleteGuildRecruitmentPoster",
+  checkLoginType,
+  guildController.deleteGuildRecruitmentPosterController
+);
 //길드 관리자 api
 router.get("/guild/getUserPostHistory", checkLoginType, guildController.getUserPostHistoryController);
 router.get("/guild/getGuildManager", checkLoginType, guildController.getGuildManagerController);
