@@ -25,8 +25,6 @@ const getGuildRecruitments = async (world_name, page = 0) => {
       .limit(itemsPerPage)
       .sort({ "postData.postDate": -1 });
 
-    console.log(Math.ceil(recruitments.length / itemsPerPage));
-
     return { recruitments, totalPages };
   } catch (error) {
     console.log(error);

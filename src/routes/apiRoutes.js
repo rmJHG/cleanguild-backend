@@ -10,6 +10,7 @@ const userLocalController = require("../api/user/local/controller/userLocalContr
 const userKakaoController = require("../api/user/kakao/controller/userKakaoController");
 const guildController = require("../api/guild/controller/guildController");
 const { test } = require("../api/test/test");
+const { getCharDataController, updateCharDataController } = require("../api/char/controller/charDataController");
 
 const checkLoginType = (req, res, next) => {
   const loginType = req.headers["logintype"];
@@ -87,4 +88,6 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   res.json({ url: `/uploads/post/${save.filename}` });
 });
 
+router.get("/char/getCharData", getCharDataController);
+router.put("/char/updateCharData", updateCharDataController);
 module.exports = router;
