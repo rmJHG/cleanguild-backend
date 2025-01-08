@@ -1,21 +1,29 @@
 const { getCharData } = require("../../../utils/getCharData");
 const CharData = require("../entity/CharData");
 
-const getCharDataService = async (charName) => {
+const getCharDataService = async (charNames) => {
+  console.log(charNames, "charNames");
   try {
-    const charData = await CharData.findOne({ character_name: charName });
+    const charDataList = [];
 
-    if (!charData) {
-      const searchedCharData = await getCharData(charName);
-      const newCharData = new CharData({
-        ...searchedCharData,
-        lastUpdateDate: new Date().toISOString(),
-      });
-      await newCharData.save();
-      return newCharData;
+    for (const charName of charNames) {
+      let charData = await CharData.findOne({ character_name: charName });
+      console.log(charName, "charName");
+      if (!charData) {
+        const searchedCharData = await getCharData(charName);
+        const newCharData = new CharData({
+          ...searchedCharData,
+          lastUpdateDate: new Date().toISOString(),
+        });
+        await newCharData.save();
+        charData = newCharData;
+      }
+
+      console.log(charData);
+      charDataList.push(charData);
     }
 
-    return charData;
+    return charDataList;
   } catch (error) {
     return error;
   }
