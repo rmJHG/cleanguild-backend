@@ -6,6 +6,7 @@ const GuildRecruitmentSchema = new mongoose.Schema({
     description: String,
     discordLink: String,
     guildContents: String,
+    guildMasterName: String,
     guildMemberCount: Number,
     guildName: String,
     guildType: String,
