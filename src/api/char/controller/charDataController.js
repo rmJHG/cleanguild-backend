@@ -8,7 +8,7 @@ const searchCharDataController = async (req, res) => {
 
   try {
     const charData = await getCharDataService(charNames);
-    console.log("캐릭터 조회 완료");
+    console.log(`${charNames} 데이터를 가져왔습니다.`);
     return res.status(200).json(charData);
   } catch (error) {
     return res.status(500).json({ message: "캐릭터 데이터를 가져오는데 실패했습니다.", error });

@@ -11,7 +11,7 @@ async function getCharData(character_name) {
         "x-nxopen-api-key": API_KEY,
       },
     });
-    if (!getCharData.ok) throw new Error("캐릭터 정보가 없습니다.");
+    if (!getCharData.ok) throw new Error(`${character_name}의 캐릭터 정보가 없습니다.`);
     const charJson = await getCharData.json();
     const getCharPopData = await fetch(`https://open.api.nexon.com/maplestory/v1/character/popularity?ocid=${ocid}`, {
       headers: {
