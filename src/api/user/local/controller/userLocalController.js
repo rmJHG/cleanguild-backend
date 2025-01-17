@@ -6,14 +6,21 @@ const { refreshTokenService } = require("../service/refreshToken");
 const User = require("../entity/User");
 const jwt = require("jsonwebtoken");
 const KakaoUser = require("../../kakao/entity/KakaoUser");
+const { changePasswordService } = require("../service/changePasswordService");
 
 const resentEmailVerificationCodeController = async (req, res) => {
   const { email } = req.body;
-  console.log(email, "email");
-  const result = await sendVerificationLink(email);
-  result
-    ? res.status(200).json({ result: result.message })
-    : res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
+
+  if (!email) {
+    res.status(400).json({ message: "이메일이 입력되지 않았습니다." });
+    return;
+  }
+  try {
+    const result = await sendVerificationLink(email);
+    res.status(200).json({ result: result.message });
+  } catch (error) {
+    res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
+  }
 };
 const checkEmailController = async (req, res) => {
   const { email } = req.body;
@@ -25,9 +32,7 @@ const checkEmailController = async (req, res) => {
 
   const result = await sendVerificationLink(email);
   console.log(result, "result");
-  result
-    ? res.status(200).json({ message: "인증 코드가 발송되었습니다." })
-    : res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
+  result ? res.status(200).json({ message: "인증 코드가 발송되었습니다." }) : res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
 };
 const verifyEmailController = async (req, res) => {
   const { welcome } = req.query;
@@ -90,9 +95,7 @@ const signUpController = async (req, res) => {
     const result = await signUp(email, password);
     if (result.message === "회원가입이 완료되었습니다.") {
       const sendEmail = await sendVerificationLink(email);
-      sendEmail
-        ? res.status(200).json({ result })
-        : res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
+      sendEmail ? res.status(200).json({ result }) : res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
     }
   } catch (error) {
     res.status(500).json({
@@ -201,6 +204,37 @@ const refreshTokenController = async (req, res) => {
     // });
   }
 };
+const changePasswordController = async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+  console.log(email, currentPassword, newPassword);
+  if (!email || !currentPassword || !newPassword) {
+    return res.status(400).json({ message: "이메일 또는 비밀번호가 입력되지 않았습니다." });
+  }
+
+  try {
+    const result = await changePasswordService(email, currentPassword, newPassword);
+    return res.status(200).json({ message: result.message });
+  } catch (error) {
+    console.log(error, "error");
+    if (error.message === "현재 비밀번호가 일치하지 않습니다.") {
+      return res.status(401).json({
+        success: false,
+        message: error.message,
+      });
+    }
+    if (error.message === "현재 비밀번호를 새로운 비밀번호로 변경할 수 없습니다.") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+      error: "비밀번호 변경 중 오류가 발생했습니다.",
+    });
+  }
+};
 
 module.exports = {
   checkEmailController,
@@ -210,4 +244,5 @@ module.exports = {
   saveHandsImageController,
   refreshTokenController,
   resentEmailVerificationCodeController,
+  changePasswordController,
 };

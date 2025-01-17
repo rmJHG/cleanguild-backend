@@ -86,13 +86,10 @@ const getGuildRecruitmentPosterCooltimeController = async (req, res) => {
 };
 
 const getGuildManagerController = async (req, res) => {
-  console.log(req.query);
   const { world_name, guild_name } = req.query;
-  console.log(world_name, guild_name);
   if (!world_name || !guild_name) return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
   try {
     const guildManager = await GuildManager.findOne({ world_name, guild_name });
-    console.log(guildManager);
     if (!guildManager) {
       const newGuildManager = new GuildManager({ world_name, guild_name, guildManagers: [] });
       await newGuildManager.save();
@@ -106,8 +103,7 @@ const getGuildManagerController = async (req, res) => {
 
 const postGuildManagerController = async (req, res) => {
   const { world_name, guild_name, guildManagers } = req.body;
-  if (!world_name || !guild_name || !guildManagers)
-    return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
+  if (!world_name || !guild_name || !guildManagers) return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
   try {
     const guildManager = await GuildManager.findOne({ world_name, guild_name });
     if (guildManager) {
@@ -123,8 +119,7 @@ const postGuildManagerController = async (req, res) => {
 
 const updateGuildManagerController = async (req, res) => {
   const { world_name, guild_name, guildManagers } = req.body;
-  if (!world_name || !guild_name || !guildManagers)
-    return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
+  if (!world_name || !guild_name || !guildManagers) return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
   try {
     const guildManager = await GuildManager.findOneAndUpdate(
       { world_name, guild_name },

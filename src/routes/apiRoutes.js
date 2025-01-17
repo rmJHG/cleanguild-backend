@@ -28,22 +28,12 @@ router.get("/user/local/verifyEmail", userLocalController.verifyEmailController)
 router.post("/user/local/resentEmailVerificationCode", userLocalController.resentEmailVerificationCodeController);
 router.post("/user/local/signup", userLocalController.signUpController);
 router.post("/user/local/signin", userLocalController.signInController);
-router.post(
-  "/user/local/saveHandsImage",
-  authenticateToken,
-  upload.single("image"),
-  userLocalController.saveHandsImageController
-);
+router.post("/user/local/saveHandsImage", authenticateToken, upload.single("image"), userLocalController.saveHandsImageController);
 router.post("/user/local/refreshToken", userLocalController.refreshTokenController);
-
+router.patch("/user/local/changePassword", checkLoginType, userLocalController.changePasswordController);
 //카카오 로그인
 router.post("/user/kakao/signIn", kakaoAuthenticateToken, userKakaoController.kakaoSignInController);
-router.post(
-  "/user/kakao/saveHandsImage",
-  kakaoAuthenticateToken,
-  upload.single("image"),
-  userKakaoController.saveHandsImageController
-);
+router.post("/user/kakao/saveHandsImage", kakaoAuthenticateToken, upload.single("image"), userKakaoController.saveHandsImageController);
 router.post("/user/kakao/refreshToken", userKakaoController.refreshTokenController);
 
 //이미지 api
@@ -52,26 +42,14 @@ router.post("/handsData/image/findMainCharacter", upload.single("image"), imageC
 
 //홍보게시글 api
 router.post("/guild/local/postGuildRecruitments", checkLoginType, guildController.postGuildRecruitmentsController);
-router.post(
-  "/guild/kakao/postGuildRecruitments",
-  kakaoAuthenticateToken,
-  guildController.postGuildRecruitmentsController
-);
+router.post("/guild/kakao/postGuildRecruitments", kakaoAuthenticateToken, guildController.postGuildRecruitmentsController);
 
 //길드 홍보 api
 router.post("/guild/getGuildRecruitments", guildController.getGuildRecruitmentsController);
 router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitmentPosterController);
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
-router.patch(
-  "/guild/updateGuildRecruitmentPoster",
-  checkLoginType,
-  guildController.updateGuildRecruitmentPosterController
-);
-router.delete(
-  "/guild/deleteGuildRecruitmentPoster",
-  checkLoginType,
-  guildController.deleteGuildRecruitmentPosterController
-);
+router.patch("/guild/updateGuildRecruitmentPoster", checkLoginType, guildController.updateGuildRecruitmentPosterController);
+router.delete("/guild/deleteGuildRecruitmentPoster", checkLoginType, guildController.deleteGuildRecruitmentPosterController);
 //길드 관리자 api
 router.get("/guild/getUserPostHistory", checkLoginType, guildController.getUserPostHistoryController);
 router.get("/guild/getGuildManager", checkLoginType, guildController.getGuildManagerController);

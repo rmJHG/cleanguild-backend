@@ -13,7 +13,7 @@ const GuildRecruitmentSchema = new mongoose.Schema({
     limitedLevel: Number,
     limitedSuroPoint: Number,
     limitedFlagPoint: Number,
-    postDate: Number,
+    postDate: { type: Number, index: true },
     managerNameArr: [String],
     guildLevel: Number,
     openKakaotalkLink: String,

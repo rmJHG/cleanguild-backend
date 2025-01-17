@@ -31,7 +31,8 @@ const saveHandsImage = async (userData, imageFile, ocid) => {
       ssim: Math.max(...ssim.map((item) => item.ssim)),
       fixelDiff: Math.min(...fixelDiff.map((item) => item.diffRatio)),
     };
-
+    if (Math.max(...ssim.map((item) => item.ssim)) < 0.3 && Math.min(...fixelDiff.map((item) => item.diffRatio)) < 0.3)
+      return res.status(400).json({ error: "이미지 오류", message: "핸즈 이미지가 아닌 것 같습니다." });
     user.handsImage = image.path;
     user.ocid = ocid;
     user.handsImageCompareResult = compareResult;
