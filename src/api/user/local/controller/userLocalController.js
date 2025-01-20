@@ -108,7 +108,6 @@ const signUpController = async (req, res) => {
 
 const signInController = async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password, "email, password");
   if (!email || !password) {
     res.status(400).json({ message: "이메일 또는 비밀번호가 입력되지 않았습니다." });
     return;
@@ -132,7 +131,8 @@ const signInController = async (req, res) => {
         profile: {
           email: result.email,
           accessToken: result.accessToken,
-          ocid: result.ocid,
+          mainCharOcid: result.mainCharOcid,
+          currentCharOcid: result.currentCharOcid,
           isVerified: result.isVerified,
           loginType: result.loginType,
         },
@@ -149,31 +149,25 @@ const signInController = async (req, res) => {
 
 const saveHandsImageController = async (req, res) => {
   const user = req.user;
+  const { mainCharOcid, currentCharOcid } = req.body;
   if (!req.file) {
     return res.status(400).json({ message: "이미지 파일이 없습니다." });
   }
 
-  if (!req.body.ocid) {
+  if (!mainCharOcid || !currentCharOcid) {
     return res.status(400).json({ message: "ocid가 없습니다." });
   }
   try {
-    const result = await saveHandsImage(user, req.file, req.body.ocid);
+    const result = await saveHandsImage(user, req.file, mainCharOcid, currentCharOcid);
 
-    console.log(result, "result");
-    res.json({ result });
+    res.json(result);
   } catch (error) {
     console.log(error);
     if (error.code === 409) {
-      return res.status(409).json({
-        success: false,
-        message: "이미 등록된 캐릭터입니다.",
-      });
+      return res.status(409).json("이미 등록된 캐릭터입니다.");
     }
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json(error.message);
   }
 };
 

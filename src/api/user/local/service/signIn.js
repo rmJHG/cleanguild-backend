@@ -24,11 +24,9 @@ const signIn = async (email, password) => {
     if (!isVerified) {
       throw new Error("이메일 인증을 완료해주세요.");
     }
-    const accessToken = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const accessToken = jwt.sign({ userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     let refreshToken = user.refreshToken;
     let needsNewRefreshToken = false;
@@ -47,11 +45,9 @@ const signIn = async (email, password) => {
     // 필요한 경우에만 새로운 리프레시 토큰 발급
     if (needsNewRefreshToken) {
       console.log("로그인시도 : 새로운 리프레시 토큰 발급");
-      refreshToken = jwt.sign(
-        { userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
-      );
+      refreshToken = jwt.sign({ userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
       await User.findOneAndUpdate({ email }, { refreshToken });
       message = "새로운 리프레시 토큰이 발급되었습니다.";
     }
@@ -61,7 +57,8 @@ const signIn = async (email, password) => {
       email: user.email,
       accessToken,
       refreshToken,
-      ocid: user.ocid,
+      currentCharOcid: user.currentCharOcid,
+      mainCharOcid: user.mainCharOcid,
       isVerified: user.isVerified,
     };
   } catch (error) {

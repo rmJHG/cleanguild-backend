@@ -24,10 +24,17 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  ocid: {
+  mainCharOcid: {
     type: String,
     unique: true,
     sparse: true,
+    index: true,
+  },
+  currentCharOcid: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true,
   },
   handsImage: {
     type: String,
