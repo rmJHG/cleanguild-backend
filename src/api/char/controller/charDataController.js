@@ -1,4 +1,5 @@
 const { getCharDataService } = require("../service/getCharDataService");
+const { getSubCharDataService } = require("../service/getSubCharDataService");
 const { updateCharDataService } = require("../service/updateCharDataService");
 
 const searchCharDataController = async (req, res) => {
@@ -27,7 +28,26 @@ const updateCharDataController = async (req, res) => {
     return res.status(500).json({ message: "캐릭터 데이터를 가져오는데 실패했습니다.", error });
   }
 };
+
+const getSubCharDataController = async (req, res) => {
+  const { mainCharName, subCharName } = req.query;
+
+  console.log(mainCharName, subCharName);
+  if (!mainCharName | !subCharName) return res.status(400).json({ message: `데이터가 유효하지 않습니다.` });
+
+  try {
+    const charData = await getSubCharDataService(mainCharName, subCharName);
+    return res.status(200).json(charData);
+  } catch (error) {
+    console.log(error);
+    if (error.message === "해당 캐릭터는 메인 캐릭터의 서브 캐릭터가 아닙니다.") {
+      return res.status(400).json({ message: error.message });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   searchCharDataController,
   updateCharDataController,
+  getSubCharDataController,
 };

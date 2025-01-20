@@ -27,11 +27,13 @@ const compareImage = async (req, res) => {
 
 const findMainCharacter = async (req, res) => {
   const img = req.file;
+  console.log(req.file);
   try {
     if (!img) return res.status(400).json({ error: "이미지 오류", message: "이미지 파일이 없습니다." });
-    if (!img.mimetype.startsWith("image/"))
-      return res.status(400).json({ error: "이미지 오류", message: "유효하지 않은 이미지 형식입니다." });
+    if (img.buffer.length < 1) return res.status(400).json({ error: "이미지 오류", message: "손상된 이미지" });
+    if (!img.mimetype.startsWith("image/")) return res.status(400).json({ error: "이미지 오류", message: "유효하지 않은 이미지 형식입니다." });
 
+    console.log(img.buffer.length);
     const ssim = await getSsim(img.buffer);
     const fixelDiff = await getFixelDiff(img.buffer);
 
@@ -43,11 +45,7 @@ const findMainCharacter = async (req, res) => {
     const charsData = await Promise.all(characterNames.map((character_name) => getMainChar(character_name)));
     const duplicateNames = findDuplicate(charsData);
     const result = await Promise.all(duplicateNames.map((character_name) => getCharData(character_name)));
-    console.log(
-      characterNames,
-      Math.max(...ssim.map((item) => item.ssim)),
-      Math.min(...fixelDiff.map((item) => item.diffRatio))
-    );
+    console.log(characterNames, Math.max(...ssim.map((item) => item.ssim)), Math.min(...fixelDiff.map((item) => item.diffRatio)));
     res.json({ result });
   } catch (error) {
     console.error("서버 오류:", error);

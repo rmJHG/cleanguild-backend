@@ -13,17 +13,13 @@ async function getMainChar(character_name) {
 
     const ocid = await getOcid(character_name);
 
-    const getMainCharData = await fetch(
-      `https://open.api.nexon.com/maplestory/v1/ranking/union?ocid=${ocid}&date=${currentDt}&page=1`,
-      {
-        method: "GET",
-        headers: {
-          "x-nxopen-api-key": API_KEY,
-        },
-      }
-    );
+    const getMainCharData = await fetch(`https://open.api.nexon.com/maplestory/v1/ranking/union?ocid=${ocid}&date=${currentDt}&page=1`, {
+      method: "GET",
+      headers: {
+        "x-nxopen-api-key": API_KEY,
+      },
+    });
     const mainCharJson = await getMainCharData.json();
-    console.log(mainCharJson);
 
     return mainCharJson.ranking[0].character_name;
   } catch (error) {

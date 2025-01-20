@@ -7,7 +7,8 @@ const Image = require("../model/imageModel");
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024,
+    files: 1,
   },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
@@ -26,10 +27,7 @@ const saveFileAndCreateDoc = async (file, userId) => {
 
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
   const filename = uniqueSuffix + path.extname(file.originalname);
-  const baseDir =
-    process.env.NODE_ENV === "production"
-      ? "/home/jhg990508/cleanguild-static/images"
-      : path.join(__dirname, "../../images/handsImage");
+  const baseDir = process.env.NODE_ENV === "production" ? "/home/jhg990508/cleanguild-static/images" : path.join(__dirname, "../../images/handsImage");
 
   const userDir = path.join(baseDir, userId.toString());
 
@@ -53,10 +51,7 @@ const saveImageFile = async (file) => {
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
   const filename = uniqueSuffix + path.extname(file.originalname);
 
-  const baseDir =
-    process.env.NODE_ENV === "development"
-      ? path.join(__dirname, "../../images/post")
-      : "/home/jhg990508/cleanguild-static/images/post";
+  const baseDir = process.env.NODE_ENV === "development" ? path.join(__dirname, "../../images/post") : "/home/jhg990508/cleanguild-static/images/post";
 
   const userDir = path.join(baseDir);
 
