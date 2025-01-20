@@ -19,10 +19,12 @@ const sendVerificationLink = async (email) => {
   const verificationLink = `${process.env.FRONTEND_URL}/verifyEmail?welcome=${verificationToken}`;
 
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.AHASEND_HOST,
+    port: process.env.AHASEND_PORT,
     auth: {
-      user: process.env.ADMIN_EMAIL,
-      pass: process.env.ADMIN_EMAIL_APP_PASSWORD,
+      user: process.env.AHASEND_ID,
+      pass: process.env.AHASEND_PASSWORD,
+      method: process.env.AHASEND_METHOD,
     },
   });
 
@@ -47,11 +49,7 @@ const sendVerificationLink = async (email) => {
     return { success: true, message: "이메일이 성공적으로 전송되었습니다." };
   } catch (error) {
     console.error("이메일 전송 실패:", error);
-    return {
-      success: false,
-      message: "이메일 전송에 실패했습니다.",
-      error: error.message,
-    };
+    throw error(error);
   }
 };
 
