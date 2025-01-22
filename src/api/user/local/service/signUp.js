@@ -13,6 +13,7 @@ const signUp = async (email, password) => {
       ocid: undefined,
     });
     await user.save();
+
     return { message: "회원가입이 완료되었습니다." };
   } catch (error) {
     if (error.code === 11000) {

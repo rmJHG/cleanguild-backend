@@ -24,12 +24,11 @@ const sendVerificationLink = async (email) => {
     auth: {
       user: process.env.AHASEND_ID,
       pass: process.env.AHASEND_PASSWORD,
-      method: process.env.AHASEND_METHOD,
     },
   });
 
   const mailOptions = {
-    from: process.env.ADMIN_EMAIL,
+    from: `MAPLEGREMIO <${process.env.ADMIN_EMAIL}>`,
     to: email,
     subject: "MAPLEGREMIO 인증 코드 발송",
     html: `

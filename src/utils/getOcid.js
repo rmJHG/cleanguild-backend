@@ -10,7 +10,7 @@ const getOcid = async (character_name) => {
     });
 
     if (!ocidResponse.ok) {
-      return null;
+      throw new Error("ocid정보를 가져오는데 실패했습니다.");
     }
 
     const { ocid } = await ocidResponse.json();

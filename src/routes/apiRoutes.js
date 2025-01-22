@@ -25,12 +25,15 @@ const checkLoginType = (req, res, next) => {
 //유저 api
 router.post("/user/local/checkEmail", userLocalController.checkEmailController);
 router.get("/user/local/verifyEmail", userLocalController.verifyEmailController);
-router.post("/user/local/resentEmailVerificationCode", userLocalController.resentEmailVerificationCodeController);
+router.post("/user/local/resendEmailVerificationCode", userLocalController.resendEmailVerificationCodeController);
 router.post("/user/local/signup", userLocalController.signUpController);
 router.post("/user/local/signin", userLocalController.signInController);
 router.post("/user/local/saveHandsImage", authenticateToken, upload.single("image"), userLocalController.saveHandsImageController);
 router.post("/user/local/refreshToken", userLocalController.refreshTokenController);
 router.patch("/user/local/changePassword", checkLoginType, userLocalController.changePasswordController);
+router.get("/user/local/findUserEmail", userLocalController.getUserEmailController);
+router.post("/user/local/resetUserPassword", userLocalController.resetUserPasswordController);
+
 //카카오 로그인
 router.post("/user/kakao/signIn", kakaoAuthenticateToken, userKakaoController.kakaoSignInController);
 router.post("/user/kakao/saveHandsImage", kakaoAuthenticateToken, upload.single("image"), userKakaoController.saveHandsImageController);

@@ -7,8 +7,10 @@ const User = require("../entity/User");
 const jwt = require("jsonwebtoken");
 const KakaoUser = require("../../kakao/entity/KakaoUser");
 const { changePasswordService } = require("../service/changePasswordService");
+const { findUserEmailService } = require("../service/findUserEmailService");
+const { resetUserPasswordService } = require("../service/resetUserPasswordService");
 
-const resentEmailVerificationCodeController = async (req, res) => {
+const resendEmailVerificationCodeController = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -36,10 +38,11 @@ const checkEmailController = async (req, res) => {
 };
 const verifyEmailController = async (req, res) => {
   const { welcome } = req.query;
-  console.log(welcome);
 
+  console.log(welcome, "welcome");
   try {
     const decoded = jwt.verify(welcome, process.env.JWT_SECRET);
+    console.log(decoded, "decoded");
     if (!decoded) return res.status(400).json({ message: "유효하지 않은 토큰입니다." });
 
     const email = decoded.email;
@@ -49,12 +52,20 @@ const verifyEmailController = async (req, res) => {
 
       user.isVerified = true;
       await user.save();
-      res.status(200).json({ message: "이메일 인증이 완료되었습니다." });
+
+      const accessToken = jwt.sign({ userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      res.status(200).json({ message: "이메일 인증이 완료되었습니다.", accessToken });
     } else {
       res.status(404).json({ message: "유저를 찾을 수 없습니다.", email });
     }
   } catch (error) {
     let email = null;
+    console.log(error.message, "error");
+    if (error.message === "jwt malformed") {
+      return res.status(400).json({ message: "유효하지 않은 토큰입니다.", email });
+    }
 
     // 만료된 토큰에서 이메일 추출
     try {
@@ -64,7 +75,7 @@ const verifyEmailController = async (req, res) => {
       console.error("토큰 디코딩 중 오류:", decodeError);
     }
 
-    if (error.name === "TokenExpiredError") {
+    if (error.message === "jwt expired") {
       return res.status(401).json({
         message: "이메일 인증 토큰이 만료됐습니다.",
         email, // 이메일 포함
@@ -229,7 +240,33 @@ const changePasswordController = async (req, res) => {
     });
   }
 };
+const getUserEmailController = async (req, res) => {
+  const { charName } = req.query;
+  if (!charName) {
+    return res.status(400).json({ message: "캐릭터 이름이 입력되지 않았습니다" });
+  }
+  try {
+    const result = await findUserEmailService(charName);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error, "error");
+    return res.status(500).json({ message: "이메일 찾기 중 오류가 발생했습니다." });
+  }
+};
 
+const resetUserPasswordController = async (req, res) => {
+  const { email, charName } = req.body;
+  if (!email || !charName) {
+    return res.status(400).json({ message: "이메일 또는 캐릭터 이름이 입력되지 않았습니다." });
+  }
+  try {
+    const result = await resetUserPasswordService(email, charName);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error, "error");
+    return res.status(500).json({ message: "비밀번호 초기화 중 오류가 발생했습니다." });
+  }
+};
 module.exports = {
   checkEmailController,
   verifyEmailController,
@@ -237,6 +274,8 @@ module.exports = {
   signInController,
   saveHandsImageController,
   refreshTokenController,
-  resentEmailVerificationCodeController,
+  resendEmailVerificationCodeController,
   changePasswordController,
+  getUserEmailController,
+  resetUserPasswordController,
 };
