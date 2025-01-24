@@ -24,31 +24,29 @@ const kakaoSignInController = async (req, res) => {
 
 const saveHandsImageController = async (req, res) => {
   const kakaoData = req.user;
+  const { mainCharOcid, currentCharOcid } = req.body;
+  if (!req.file) {
+    return res.status(400).json({ message: "이미지 파일이 없습니다." });
+  }
 
+  if (!mainCharOcid || !currentCharOcid) {
+    return res.status(400).json({ message: "ocid가 없습니다." });
+  }
   try {
-    if (!req.file) return res.status(400).json({ message: "이미지 파일이 없습니다." });
-
-    if (!req.body.ocid) return res.status(400).json({ message: "ocid가 없습니다." });
     if (!kakaoData || !kakaoData.kakao_account) {
       return res.status(401).json({ message: "카카오 계정 정보가 없습니다." });
     }
-    console.log(req.file);
-    const result = await saveHandsImageForKakao(kakaoData.kakao_account.email, req.file, req.body.ocid);
+
+    const result = await saveHandsImageForKakao(kakaoData.kakao_account.email, req.file, mainCharOcid, currentCharOcid);
 
     console.log(result);
-    res.json({ result });
+    res.status(200).json(result);
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message: "이미 등록된 캐릭터입니다.",
-      });
+      return res.status(409).json("이미 등록된 캐릭터입니다.");
     }
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json(error.message);
   }
 };
 const refreshTokenController = async (req, res) => {

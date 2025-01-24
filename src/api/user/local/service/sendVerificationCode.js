@@ -1,12 +1,26 @@
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const dns = require("dns");
+
+function isValidEmailDomain(email) {
+  const domain = email.split("@")[1];
+  return new Promise((resolve) => {
+    dns.resolveMx(domain, (err, addresses) => {
+      if (err || addresses.length === 0) {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 
 const sendVerificationLink = async (email) => {
-  function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-  if (!email || !isValidEmail(email)) {
+  if (!email || !isValidEmail(email) || !(await isValidEmailDomain(email))) {
     return {
       success: false,
       message: "유효하지 않은 이메일 주소입니다.",
@@ -44,11 +58,12 @@ const sendVerificationLink = async (email) => {
 
   try {
     const info = await transporter.sendMail(mailOptions);
+    console.log(info);
     console.log(`${email}로 이메일 전송 완료: ${info.response}`);
-    return { success: true, message: "이메일이 성공적으로 전송되었습니다." };
+    return { success: true, message: "메일이 성공적으로 전송되었습니다." };
   } catch (error) {
     console.error("이메일 전송 실패:", error);
-    throw error(error);
+    throw error;
   }
 };
 

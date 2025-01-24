@@ -9,14 +9,14 @@ const kakaoSignIn = async (kakaoData) => {
     return { message: "로컬 계정으로 로그인해주세요." };
   }
   if (!kakaoUser && !localUser) {
-    const user = new KakaoUser({
+    const newUser = new KakaoUser({
       email: kakaoData.kakao_account.email,
       role: "user",
       accountType: "kakao",
       isVerified: true,
     });
-    await user.save();
-    return user;
+    await newUser.save();
+    return newUser;
   }
   return kakaoUser;
 };

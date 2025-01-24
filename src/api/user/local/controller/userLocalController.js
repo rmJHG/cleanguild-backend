@@ -19,6 +19,7 @@ const resendEmailVerificationCodeController = async (req, res) => {
   }
   try {
     const result = await sendVerificationLink(email);
+    console.log(result, "result");
     res.status(200).json({ result: result.message });
   } catch (error) {
     res.status(500).json({ message: "인증 코드 발송 중 오류가 발생했습니다." });
@@ -171,7 +172,7 @@ const saveHandsImageController = async (req, res) => {
   try {
     const result = await saveHandsImage(user, req.file, mainCharOcid, currentCharOcid);
 
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     console.log(error);
     if (error.code === 409) {
@@ -256,6 +257,7 @@ const getUserEmailController = async (req, res) => {
 
 const resetUserPasswordController = async (req, res) => {
   const { email, charName } = req.body;
+  console.log(email, charName);
   if (!email || !charName) {
     return res.status(400).json({ message: "이메일 또는 캐릭터 이름이 입력되지 않았습니다." });
   }

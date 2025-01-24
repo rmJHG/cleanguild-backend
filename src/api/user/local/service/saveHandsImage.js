@@ -27,12 +27,15 @@ const saveHandsImage = async (userData, imageFile, mainCharOcid, currentCharOcid
 
     const ssim = await getSsim(image.path);
     const fixelDiff = await getFixelDiff(image.path);
+
     const compareResult = {
       ssim: Math.max(...ssim.map((item) => item.ssim)),
       fixelDiff: Math.min(...fixelDiff.map((item) => item.diffRatio)),
     };
+
     if (Math.max(...ssim.map((item) => item.ssim)) < 0.3 && Math.min(...fixelDiff.map((item) => item.diffRatio)) < 0.3)
       throw new Error("핸즈 이미지가 아닌 것 같습니다.");
+
     user.handsImage = image.path;
     user.mainCharOcid = mainCharOcid;
     user.currentCharOcid = currentCharOcid;
@@ -41,7 +44,7 @@ const saveHandsImage = async (userData, imageFile, mainCharOcid, currentCharOcid
 
     return "핸즈 이미지 업로드가 완료되었습니다.";
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
