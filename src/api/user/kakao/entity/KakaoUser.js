@@ -51,6 +51,9 @@ const userSchema = new mongoose.Schema({
     default: "kakao",
     required: true,
   },
+  lastCharChangeAt: {
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("KakaoUser", userSchema);

@@ -9,6 +9,7 @@ const KakaoUser = require("../../kakao/entity/KakaoUser");
 const { changePasswordService } = require("../service/changePasswordService");
 const { findUserEmailService } = require("../service/findUserEmailService");
 const { resetUserPasswordService } = require("../service/resetUserPasswordService");
+const { changeCurrentCharService } = require("../service/changeCurrentCharService");
 
 const resendEmailVerificationCodeController = async (req, res) => {
   const { email } = req.body;
@@ -204,10 +205,10 @@ const refreshTokenController = async (req, res) => {
     }
     res.status(200).json({ accessToken: result.accessToken });
   } catch (error) {
-    // return res.status(401).json({
-    //   success: false,
-    //   message: "리프레쉬 토큰이 만료되었습니다.",
-    // });
+    return res.status(401).json({
+      success: false,
+      message: "리프레쉬 토큰이 만료되었습니다.",
+    });
   }
 };
 const changePasswordController = async (req, res) => {
@@ -269,6 +270,19 @@ const resetUserPasswordController = async (req, res) => {
     return res.status(500).json({ message: "비밀번호 초기화 중 오류가 발생했습니다." });
   }
 };
+const changeCurrentCharController = async (req, res) => {
+  const { currentCharOcid } = req.body;
+  const user = req.user;
+  if (!currentCharOcid) {
+    return res.status(400).json({ message: "캐릭터가 선택되지 않았습니다." });
+  }
+  try {
+    const result = await changeCurrentCharService(user, currentCharOcid);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: "캐릭터 변경 중 오류가 발생했습니다." });
+  }
+};
 module.exports = {
   checkEmailController,
   verifyEmailController,
@@ -280,4 +294,5 @@ module.exports = {
   changePasswordController,
   getUserEmailController,
   resetUserPasswordController,
+  changeCurrentCharController,
 };

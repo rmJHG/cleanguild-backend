@@ -10,7 +10,13 @@ const userLocalController = require("../api/user/local/controller/userLocalContr
 const userKakaoController = require("../api/user/kakao/controller/userKakaoController");
 const guildController = require("../api/guild/controller/guildController");
 const { test } = require("../api/test/test");
-const { searchCharDataController, updateCharDataController, getSubCharDataController } = require("../api/char/controller/charDataController");
+const {
+  searchCharDataController,
+  updateCharDataController,
+  getSubCharDataController,
+  getMainCharDataController,
+  verifyUserMainCharController,
+} = require("../api/char/controller/charDataController");
 
 const checkLoginType = (req, res, next) => {
   const loginType = req.headers["logintype"];
@@ -33,7 +39,7 @@ router.post("/user/local/refreshToken", userLocalController.refreshTokenControll
 router.patch("/user/local/changePassword", checkLoginType, userLocalController.changePasswordController);
 router.get("/user/local/findUserEmail", userLocalController.getUserEmailController);
 router.post("/user/local/resetUserPassword", userLocalController.resetUserPasswordController);
-
+router.patch("/user/local/changeCurrentChar", checkLoginType, userLocalController.changeCurrentCharController);
 //카카오 로그인
 router.post("/user/kakao/signIn", kakaoAuthenticateToken, userKakaoController.kakaoSignInController);
 router.post("/user/kakao/saveHandsImage", kakaoAuthenticateToken, upload.single("image"), userKakaoController.saveHandsImageController);
@@ -60,17 +66,47 @@ router.post("/guild/postGuildManager", guildController.postGuildManagerControlle
 router.put("/guild/updateGuildManager", guildController.updateGuildManagerController);
 router.delete("/guild/deleteGuildManager", guildController.deleteGuildManagerController);
 
-router.post("/test", upload.single("image"), test);
+//캐릭터 api
+router.post("/char/searchCharData", searchCharDataController);
+router.put("/char/updateCharData", updateCharDataController);
+router.get("/char/getSubCharData", getSubCharDataController);
+router.get("/char/getMainCharData", getMainCharDataController);
+router.post("/char/verifyUserMainChar", verifyUserMainCharController);
 
+//테스트 api
 router.post("/upload", upload.single("image"), async (req, res) => {
   console.log(req.file);
 
   const save = await saveImageFile(req.file);
   res.json({ url: `/uploads/post/${save.filename}` });
 });
-//캐릭터 api
-router.post("/char/searchCharData", searchCharDataController);
-router.put("/char/updateCharData", updateCharDataController);
-router.get("/char/getSubCharData", getSubCharDataController);
-
+// router.post("/test", async (req, res) => {
+//   const email = {
+//     from: {
+//       name: "My awesome startup",
+//       email: "service@maplegremio.com",
+//     },
+//     recipients: [
+//       {
+//         name: "Someone",
+//         email: "jdfsfhg990508@gmail.com",
+//       },
+//     ],
+//     content: {
+//       subject: "Sample email",
+//       text_body: "Plain text body",
+//       html_body: "<p>This is the <b>HTML</b> body</p>",
+//     },
+//   };
+//   const response = await fetch("https://api.ahasend.com/v1/email/send", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       "X-Api-Key": "Y6Dsy9OEjM4eb41D2eOwMx4LQKtSOPgf4fhQSt1DFeVMi9PKAYGT3hQl6E51HItR",
+//     },
+//     body: JSON.stringify(email),
+//   });
+//   const data = await response.json();
+//   console.log(data);
+// });
 module.exports = router;
