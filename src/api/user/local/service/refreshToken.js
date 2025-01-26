@@ -10,11 +10,9 @@ const refreshTokenService = async (refreshToken) => {
     if (!user) {
       throw new Error("유저가 존재하지 않습니다.");
     }
-    const accessToken = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const accessToken = jwt.sign({ userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     return { accessToken, message: "새로운 액세스 토큰이 발급되었습니다." };
   } catch (error) {

@@ -50,7 +50,6 @@ const saveHandsImageController = async (req, res) => {
   }
 };
 const refreshTokenController = async (req, res) => {
-  // console.log(req.cookies._Loya, "cookie");
   const refreshToken = req.cookies._Loya;
   console.log(refreshToken, "refreshToken");
   if (!refreshToken) {
@@ -68,7 +67,8 @@ const refreshTokenController = async (req, res) => {
         message: "리프레쉬 토큰이 만료되었습니다.",
       });
     }
-    console.log(result);
+    console.log(result, "result");
+
     res.status(200).json({ accessToken: result.accessToken });
   } catch (error) {
     return res.status(401).json({

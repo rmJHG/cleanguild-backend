@@ -15,6 +15,7 @@ const kakaoAuthenticateToken = async (req, res, next) => {
 
     const kakaoData = await kakaoCheck.json();
 
+    console.log(kakaoData, token);
     if (kakaoData.code === -401) {
       return res.status(401).json({ message: "토큰이 만료되었습니다." });
     }
