@@ -55,6 +55,9 @@ const userSchema = new mongoose.Schema({
     default: "local",
     required: true,
   },
+  lastCharChangeAt: {
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

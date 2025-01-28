@@ -1,3 +1,4 @@
+const { changeCurrentCharForKakaoService } = require("../service/changeCurrentCharForKakaoService");
 const { kakaoSignIn } = require("../service/kakaoSignin");
 const { refreshTokenService } = require("../service/refreshToken");
 const { saveHandsImageForKakao } = require("../service/saveHandsImageForKakao");
@@ -78,8 +79,42 @@ const refreshTokenController = async (req, res) => {
   }
 };
 
+const checkLastCharChangeForKakaoController = async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const result = await checkLastCharChangeService(email);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json(false);
+  }
+};
+
+const changeCurrentCharForKakaoController = async (req, res) => {
+  const { currentCharOcid } = req.body;
+
+  console.log(currentCharOcid, "currentCharOcid");
+  const user = req.user.kakao_account;
+
+  console.log(user, "user");
+  if (!currentCharOcid) {
+    return res.status(400).json({ message: "캐릭터가 선택되지 않았습니다." });
+  }
+
+  try {
+    const result = await changeCurrentCharForKakaoService(user, currentCharOcid);
+    console.log(result, "result");
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.message);
+  }
+};
+
 module.exports = {
   kakaoSignInController,
   saveHandsImageController,
   refreshTokenController,
+  changeCurrentCharForKakaoController,
+  checkLastCharChangeForKakaoController,
 };

@@ -40,11 +40,14 @@ router.patch("/user/local/changePassword", checkLoginType, userLocalController.c
 router.get("/user/local/findUserEmail", userLocalController.getUserEmailController);
 router.post("/user/local/resetUserPassword", userLocalController.resetUserPasswordController);
 router.patch("/user/local/changeCurrentChar", checkLoginType, userLocalController.changeCurrentCharController);
+router.get("/user/local/checkLastCharChange", checkLoginType, userLocalController.checkLastCharChangeController);
+
 //카카오 로그인
 router.post("/user/kakao/signIn", kakaoAuthenticateToken, userKakaoController.kakaoSignInController);
 router.post("/user/kakao/saveHandsImage", kakaoAuthenticateToken, upload.single("image"), userKakaoController.saveHandsImageController);
 router.post("/user/kakao/refreshToken", userKakaoController.refreshTokenController);
-
+router.patch("/user/kakao/changeCurrentChar", kakaoAuthenticateToken, userKakaoController.changeCurrentCharForKakaoController);
+router.get("/user/kakao/checkLastCharChange", kakaoAuthenticateToken, userKakaoController.checkLastCharChangeForKakaoController);
 //이미지 api
 router.post("/handsData/image/compare", upload.single("image"), imageController.compareImage);
 router.post("/handsData/image/findMainCharacter", upload.single("image"), imageController.findMainCharacter);

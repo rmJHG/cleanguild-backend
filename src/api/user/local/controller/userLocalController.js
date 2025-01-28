@@ -10,6 +10,7 @@ const { changePasswordService } = require("../service/changePasswordService");
 const { findUserEmailService } = require("../service/findUserEmailService");
 const { resetUserPasswordService } = require("../service/resetUserPasswordService");
 const { changeCurrentCharService } = require("../service/changeCurrentCharService");
+const { checkLastCharChangeService } = require("../service/checkLastCharChangeService");
 
 const resendEmailVerificationCodeController = async (req, res) => {
   const { email } = req.body;
@@ -272,6 +273,7 @@ const resetUserPasswordController = async (req, res) => {
 };
 const changeCurrentCharController = async (req, res) => {
   const { currentCharOcid } = req.body;
+  console.log(currentCharOcid, "currentCharOcid");
   const user = req.user;
   if (!currentCharOcid) {
     return res.status(400).json({ message: "캐릭터가 선택되지 않았습니다." });
@@ -281,6 +283,16 @@ const changeCurrentCharController = async (req, res) => {
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({ message: "캐릭터 변경 중 오류가 발생했습니다." });
+  }
+};
+const checkLastCharChangeController = async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const result = await checkLastCharChangeService(email);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json(false);
   }
 };
 module.exports = {
@@ -295,4 +307,5 @@ module.exports = {
   getUserEmailController,
   resetUserPasswordController,
   changeCurrentCharController,
+  checkLastCharChangeController,
 };
