@@ -6,7 +6,7 @@ const kakaoSignIn = async (kakaoData) => {
   const kakaoUser = await KakaoUser.findOne({ email: kakaoData.kakao_account.email });
   const localUser = await User.findOne({ email: kakaoData.kakao_account.email });
   if (localUser) {
-    return { message: "로컬 계정으로 로그인해주세요." };
+    return { message: "로컬 계정이 존재합니다. 일반로그인으로 로그인해주세요." };
   }
   if (!kakaoUser && !localUser) {
     const newUser = new KakaoUser({

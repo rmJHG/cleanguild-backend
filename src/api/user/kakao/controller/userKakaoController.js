@@ -1,4 +1,5 @@
 const { changeCurrentCharForKakaoService } = require("../service/changeCurrentCharForKakaoService");
+const { checkLastCharChangeForKakaoService } = require("../service/checkLastCharChangeService");
 const { kakaoSignIn } = require("../service/kakaoSignin");
 const { refreshTokenService } = require("../service/refreshToken");
 const { saveHandsImageForKakao } = require("../service/saveHandsImageForKakao");
@@ -7,7 +8,7 @@ const kakaoSignInController = async (req, res) => {
   try {
     const kakaoData = req.user;
     const result = await kakaoSignIn(kakaoData);
-    if (result.message === "로컬 계정으로 로그인해주세요.") {
+    if (result.message === "로컬 계정이 존재합니다. 일반로그인으로 로그인해주세요.") {
       return res.status(400).json({
         success: false,
         message: result.message,
@@ -83,10 +84,11 @@ const checkLastCharChangeForKakaoController = async (req, res) => {
   const { email } = req.query;
 
   try {
-    const result = await checkLastCharChangeService(email);
-    return res.status(200).json(result);
+    const result = await checkLastCharChangeForKakaoService(email);
+    return res.status(200).json({ hasChangedIn7Days: result });
   } catch (error) {
-    return res.status(500).json(false);
+    console.log(error);
+    return res.status(500).json(error);
   }
 };
 

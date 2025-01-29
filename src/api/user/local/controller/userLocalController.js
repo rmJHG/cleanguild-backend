@@ -290,9 +290,9 @@ const checkLastCharChangeController = async (req, res) => {
 
   try {
     const result = await checkLastCharChangeService(email);
-    return res.status(200).json(result);
+    return res.status(200).json({ hasChangedIn7Days: result });
   } catch (error) {
-    return res.status(500).json(false);
+    return res.status(500).json(error);
   }
 };
 module.exports = {

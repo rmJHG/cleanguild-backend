@@ -27,7 +27,8 @@ const saveFileAndCreateDoc = async (file, userId) => {
 
   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
   const filename = uniqueSuffix + path.extname(file.originalname);
-  const baseDir = process.env.NODE_ENV === "production" ? "/home/jhg990508/cleanguild-static/images" : path.join(__dirname, "../../images/handsImage");
+  const baseDir =
+    process.env.NODE_ENV === "production" ? "/home/jhg990508/cleanguild-static/images/user-hands" : path.join(__dirname, "../../images/handsImage");
 
   const userDir = path.join(baseDir, userId.toString());
 
