@@ -141,15 +141,7 @@ const signInController = async (req, res) => {
         path: "/",
       })
       .json({
-        message: result.message,
-        profile: {
-          email: result.email,
-          accessToken: result.accessToken,
-          mainCharOcid: result.mainCharOcid,
-          currentCharOcid: result.currentCharOcid,
-          isVerified: result.isVerified,
-          loginType: result.loginType,
-        },
+        profile: result,
       });
   } catch (error) {
     res.status(500).json({
@@ -295,6 +287,45 @@ const checkLastCharChangeController = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+const deleteUserController = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "유저 정보 입력이 올바르지 않습니다." });
+  }
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "존재하지 않는 이메일입니다." });
+    }
+
+    user.deleteRequestAt = new Date();
+    await user.save();
+    return res.status(200).json({ message: "탈퇴 요청 성공" });
+  } catch (error) {
+    return res.status(500).json({ message: "탈퇴 요청중 오류가 발생했습니다." });
+  }
+};
+const cancelDeleteUserController = async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+  if (!email) {
+    return res.status(400).json({ message: "유저 정보 입력이 올바르지 않습니다." });
+  }
+  try {
+    const user = await User.findOne({
+      email,
+    });
+    if (!user) {
+      return res.status(404).json({ message: "존재하지 않는 이메일입니다." });
+    }
+
+    user.deleteRequestAt = null;
+    await user.save();
+    return res.status(200).json({ message: "탈퇴 취소 요청 성공" });
+  } catch (error) {
+    return res.status(500).json({ message: "탈퇴 요청중 오류가 발생했습니다." });
+  }
+};
 module.exports = {
   checkEmailController,
   verifyEmailController,
@@ -308,4 +339,6 @@ module.exports = {
   resetUserPasswordController,
   changeCurrentCharController,
   checkLastCharChangeController,
+  deleteUserController,
+  cancelDeleteUserController,
 };

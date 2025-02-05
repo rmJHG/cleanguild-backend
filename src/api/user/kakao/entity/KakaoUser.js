@@ -54,6 +54,9 @@ const userSchema = new mongoose.Schema({
   lastCharChangeAt: {
     type: Date,
   },
+  deleteRequestAt: {
+    type: Date || null,
+  },
 });
 
 module.exports = mongoose.model("KakaoUser", userSchema);

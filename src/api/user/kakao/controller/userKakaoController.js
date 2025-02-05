@@ -1,3 +1,4 @@
+const KakaoUser = require("../entity/KakaoUser");
 const { changeCurrentCharForKakaoService } = require("../service/changeCurrentCharForKakaoService");
 const { checkLastCharChangeForKakaoService } = require("../service/checkLastCharChangeService");
 const { kakaoSignIn } = require("../service/kakaoSignin");
@@ -8,19 +9,17 @@ const kakaoSignInController = async (req, res) => {
   try {
     const kakaoData = req.user;
     const result = await kakaoSignIn(kakaoData);
-    if (result.message === "로컬 계정이 존재합니다. 일반로그인으로 로그인해주세요.") {
-      return res.status(400).json({
-        success: false,
-        message: result.message,
-      });
-    }
-    console.log(result);
+
+    console.log(result, "result");
     res.status(200).json({ result });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    if (error.message === "로컬 계정이 존재합니다. 일반로그인으로 로그인해주세요.") {
+      return res.status(400).json(error.message);
+    }
+    if (error.message === "탈퇴 요청을 한 계정입니다.") {
+      return res.status(400).json(error.message);
+    }
+    res.status(500).json(error.message);
   }
 };
 
@@ -112,6 +111,44 @@ const changeCurrentCharForKakaoController = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
+const deleteUserForKakaoController = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "유저 정보 입력이 올바르지 않습니다." });
+  }
+  try {
+    const user = await KakaoUser.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "존재하지 않는 이메일입니다." });
+    }
+
+    user.deleteRequestAt = new Date();
+    await user.save();
+    return res.status(200).json({ message: "탈퇴 요청 성공" });
+  } catch (error) {
+    return res.status(500).json({ message: "탈퇴 요청중 오류가 발생했습니다." });
+  }
+};
+const cancelDeleteUserForKakaoController = async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+  if (!email) {
+    return res.status(400).json({ message: "유저 정보 입력이 올바르지 않습니다." });
+  }
+  try {
+    const user = await KakaoUser.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "존재하지 않는 이메일입니다." });
+    }
+
+    user.deleteRequestAt = null;
+    await user.save();
+    return res.status(200).json({ message: "탈퇴 취소 요청 성공" });
+  } catch (error) {
+    return res.status(500).json({ message: "탈퇴 요청중 오류가 발생했습니다." });
+  }
+};
 
 module.exports = {
   kakaoSignInController,
@@ -119,4 +156,6 @@ module.exports = {
   refreshTokenController,
   changeCurrentCharForKakaoController,
   checkLastCharChangeForKakaoController,
+  deleteUserForKakaoController,
+  cancelDeleteUserForKakaoController,
 };

@@ -8,6 +8,7 @@ const signIn = async (email, password) => {
     const kakaoUser = await KakaoUser.findOne({
       email,
     });
+
     if (kakaoUser) {
       throw new Error("카카오 계정으로 로그인해주세요.");
     }
@@ -24,13 +25,14 @@ const signIn = async (email, password) => {
     if (!isVerified) {
       throw new Error("이메일 인증을 완료해주세요.");
     }
+
     const accessToken = jwt.sign({ userId: user._id, email: user.email, role: user.role, ...(user.ocid && { ocid: user.ocid }) }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
     let refreshToken = user.refreshToken;
     let needsNewRefreshToken = false;
-    let message = "로그인이 완료되었습니다.";
+
     // 리프레시 토큰 검증 또는 새로 발급
     if (refreshToken) {
       try {
@@ -49,11 +51,21 @@ const signIn = async (email, password) => {
         expiresIn: "7d",
       });
       await User.findOneAndUpdate({ email }, { refreshToken });
-      message = "새로운 리프레시 토큰이 발급되었습니다.";
+      console.log("새로운 리프레시 토큰이 발급되었습니다.");
     }
 
+    if (user.deleteRequestAt) {
+      return {
+        email: user.email,
+        accessToken,
+        refreshToken,
+        currentCharOcid: user.currentCharOcid,
+        mainCharOcid: user.mainCharOcid,
+        isVerified: user.isVerified,
+        deleteRequest: true,
+      };
+    }
     return {
-      message,
       email: user.email,
       accessToken,
       refreshToken,

@@ -9,7 +9,7 @@ const imageController = require("../api/handsData/image/controller/imageControll
 const userLocalController = require("../api/user/local/controller/userLocalController");
 const userKakaoController = require("../api/user/kakao/controller/userKakaoController");
 const guildController = require("../api/guild/controller/guildController");
-const { test } = require("../api/test/test");
+
 const {
   searchCharDataController,
   updateCharDataController,
@@ -41,6 +41,8 @@ router.get("/user/local/findUserEmail", userLocalController.getUserEmailControll
 router.post("/user/local/resetUserPassword", userLocalController.resetUserPasswordController);
 router.patch("/user/local/changeCurrentChar", checkLoginType, userLocalController.changeCurrentCharController);
 router.get("/user/local/checkLastCharChange", checkLoginType, userLocalController.checkLastCharChangeController);
+router.post("/user/local/deleteUser", checkLoginType, userLocalController.deleteUserController);
+router.post("/user/local/cancelDeleteUser", userLocalController.cancelDeleteUserController);
 
 //카카오 로그인
 router.post("/user/kakao/signIn", kakaoAuthenticateToken, userKakaoController.kakaoSignInController);
@@ -48,6 +50,9 @@ router.post("/user/kakao/saveHandsImage", kakaoAuthenticateToken, upload.single(
 router.post("/user/kakao/refreshToken", userKakaoController.refreshTokenController);
 router.patch("/user/kakao/changeCurrentChar", kakaoAuthenticateToken, userKakaoController.changeCurrentCharForKakaoController);
 router.get("/user/kakao/checkLastCharChange", kakaoAuthenticateToken, userKakaoController.checkLastCharChangeForKakaoController);
+router.post("/user/kakao/deleteUser", checkLoginType, userKakaoController.deleteUserForKakaoController);
+router.post("/user/kakao/cancelDeleteUser", userKakaoController.cancelDeleteUserForKakaoController);
+
 //이미지 api
 router.post("/handsData/image/compare", upload.single("image"), imageController.compareImage);
 router.post("/handsData/image/findMainCharacter", upload.single("image"), imageController.findMainCharacter);
@@ -62,6 +67,7 @@ router.post("/guild/getGuildRecruitmentPoster", guildController.getGuildRecruitm
 router.post("/guild/getGuildRecruitmentPosterCooltime", guildController.getGuildRecruitmentPosterCooltimeController);
 router.patch("/guild/updateGuildRecruitmentPoster", checkLoginType, guildController.updateGuildRecruitmentPosterController);
 router.delete("/guild/deleteGuildRecruitmentPoster", checkLoginType, guildController.deleteGuildRecruitmentPosterController);
+
 //길드 관리자 api
 router.get("/guild/getUserPostHistory", checkLoginType, guildController.getUserPostHistoryController);
 router.get("/guild/getGuildManager", checkLoginType, guildController.getGuildManagerController);
