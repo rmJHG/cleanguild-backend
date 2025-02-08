@@ -44,7 +44,7 @@ const serverList = [
   ["arcane", "아케인"],
   ["enosis", "이노시스"],
   ["eos", "에오스"],
-  ["helios", "헬리오스"],
+  ["helios", "핼리오스"],
 ];
 
 const getGuildModel = (serverName) => {
