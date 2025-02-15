@@ -178,7 +178,7 @@ const saveHandsImageController = async (req, res) => {
 };
 
 const refreshTokenController = async (req, res) => {
-  // console.log(req.cookies._Loya, "cookie");
+  console.log(req.cookies._Loya, "cookie");
   const refreshToken = req.cookies._Loya;
   console.log(refreshToken, "refreshToken");
   if (!refreshToken) {

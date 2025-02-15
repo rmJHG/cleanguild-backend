@@ -18,19 +18,19 @@ const getCharDataService = async (charNames) => {
           });
           await newCharData.save();
           charData = newCharData;
-        } else {
-          const lastUpdateDate = new Date(charData.lastUpdateDate);
-          if (now - lastUpdateDate > 1000 * 60 * 60 * 24 * 7) {
-            console.log(`캐릭터 정보를 업데이트합니다. ${charName}`);
-            const updatedCharData = await getCharData(charName);
-            charData = Object.assign(charData, {
-              ...updatedCharData,
-              lastUpdateDate: now.toISOString(),
-            });
-            await charData.save();
-          }
-          charDataList.push(charData);
         }
+
+        const lastUpdateDate = new Date(charData.lastUpdateDate);
+        if (now - lastUpdateDate > 1000 * 60 * 60 * 24 * 7) {
+          const updatedCharData = await getCharData(charName);
+          charData = Object.assign(charData, {
+            ...updatedCharData,
+            lastUpdateDate: now.toISOString(),
+          });
+          await charData.save();
+        }
+
+        charDataList.push(charData);
       } catch (error) {
         console.error(`캐릭터 정보를 가져오는데 실패했습니다. ${charName}:`, error);
         continue;

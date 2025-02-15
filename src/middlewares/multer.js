@@ -49,29 +49,33 @@ const saveImageFile = async (file) => {
     throw new Error("파일 정보가 유효하지 않습니다.");
   }
 
-  const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-  const filename = uniqueSuffix + path.extname(file.originalname);
+  try {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const filename = uniqueSuffix + path.extname(file.originalname);
 
-  const baseDir = process.env.NODE_ENV === "development" ? path.join(__dirname, "../../images/post") : "/home/jhg990508/cleanguild-static/images/post";
+    const baseDir = process.env.NODE_ENV === "development" ? path.join(__dirname, "../../images/post") : "/home/jhg990508/cleanguild-static/images/post";
 
-  const userDir = path.join(baseDir);
+    const userDir = path.join(baseDir);
 
-  // 사용자 디렉토리가 존재하지 않으면 생성
-  await fs.mkdir(userDir, { recursive: true });
+    // 사용자 디렉토리가 존재하지 않으면 생성
+    await fs.mkdir(userDir, { recursive: true });
 
-  const filepath = path.join(userDir, filename);
+    const filepath = path.join(userDir, filename);
 
-  // 파일 저장
-  await fs.writeFile(filepath, buffer);
-  const uploadTime = Date.now();
+    // 파일 저장
+    await fs.writeFile(filepath, buffer);
+    const uploadTime = Date.now();
 
-  const newImage = new Image({
-    filename: filename, // 파일 이름
-    path: filepath, // 파일 경로
-    uploadTime: uploadTime, // 업로드 시간
-  });
-  await newImage.save();
-  return { path: filepath, filename };
+    const newImage = new Image({
+      filename: filename, // 파일 이름
+      path: filepath, // 파일 경로
+      uploadTime: uploadTime, // 업로드 시간
+    });
+    await newImage.save();
+    return { path: filepath, filename };
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = { upload, saveFileAndCreateDoc, saveImageFile };

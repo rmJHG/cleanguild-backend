@@ -4,6 +4,7 @@ const cors = require("cors");
 const apiRoutes = require("./src/routes/apiRoutes");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 const app = express();
 const port = 8080;
 
@@ -40,6 +41,11 @@ mongoose.connect(process.env.MONGO_URL).catch((err) => {
 });
 // Routes
 app.use("/api/v1", apiRoutes);
+
+if (process.env.NODE_ENV === "development") {
+  const imgDir = path.join(__dirname, "./images");
+  app.use("/uploads", express.static(imgDir));
+}
 
 mongoose.connection.on("connected", () => {
   console.log("MongoDB connected");
