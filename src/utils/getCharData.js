@@ -5,8 +5,6 @@ async function getCharData(character_name) {
 
   try {
     const ocid = await getOcid(character_name);
-    console.log(character_name, "character_name");
-    console.log(ocid, "ocid");
     let now = new Date();
 
     if (process.env.NODE_ENV === "development") {
@@ -30,7 +28,6 @@ async function getCharData(character_name) {
       },
     });
     const charJson = await getCharData.json();
-    console.log(charJson, "charJson");
 
     if (!getCharData.ok) throw new Error(`${character_name}의 캐릭터 정보가 없습니다.`);
 
@@ -44,7 +41,7 @@ async function getCharData(character_name) {
 
     return { ...charJson, ocid, popularity: popularity.popularity };
   } catch (error) {
-    throw new Error(error);
+    throw error;
   }
 }
 
